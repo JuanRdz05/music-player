@@ -17,6 +17,17 @@ const songName = document.getElementById("song-name");
 let canciones = [];
 let indiceCancion = 0;
 
+function actualizarConAnimacion() {
+	songName.classList.remove("swipe-in");
+	songName.classList.add("swipe-out");
+
+	setTimeout(() => {
+		actualizarNombreCancion(canciones, indiceCancion, songName);
+		songName.classList.remove("swipe-out");
+		songName.classList.add("swipe-in");
+	}, 250);
+}
+
 async function cargarCanciones() {
 	const canciones = await ipcRenderer.invoke("get-songs");
 	console.log("Lista de canciones obtenida desde Node:", canciones);
@@ -29,18 +40,20 @@ async function iniciarReproductor() {
 	reproductor.src = "music/" + canciones[indiceCancion];
 	actualizarNombreCancion(canciones, indiceCancion, songName);
 
+	//Cancion siguiente
 	nextBtn.addEventListener("click", () => {
 		indiceCancion++;
 		//Si el indice de la cancion es mayor que el tamño del arreglo, entonces volvemos al inicio
 		if (indiceCancion > canciones.length - 1) {
 			indiceCancion = 0;
 		}
-		actualizarNombreCancion(canciones, indiceCancion, songName);
+		actualizarConAnimacion();
 		reproductor.src = "music/" + canciones[indiceCancion];
 		playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 		reproductor.play();
 	});
 
+	//Cancion anterior
 	prevBtn.addEventListener("click", () => {
 		if (progressBar.value <= 3) {
 			indiceCancion--;
@@ -48,8 +61,8 @@ async function iniciarReproductor() {
 			if (indiceCancion < 0) {
 				indiceCancion = canciones.length - 1;
 			}
+			actualizarConAnimacion();
 		}
-		actualizarNombreCancion(canciones, indiceCancion, songName);
 		reproductor.src = "music/" + canciones[indiceCancion];
 		reproductor.currentTime = 0;
 		playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';

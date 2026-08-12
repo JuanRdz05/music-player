@@ -147,3 +147,34 @@ audio {
 
 	box-shadow: 0 2px 8px rgba(230, 57, 70, 0.2);
 }
+
+/* Animaciones para el título de la canción */
+.swipe-out {
+	animation: swipeOutUp 0.25s ease-in forwards;
+}
+
+.swipe-in {
+	animation: swipeInUp 0.25s ease-out forwards;
+}
+
+@keyframes swipeOutUp {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-15px);
+	}
+}
+
+@keyframes swipeInUp {
+	0% {
+		opacity: 0;
+		transform: translateY(15px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
