@@ -3,18 +3,36 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="stylesheet" href="CSS/style.css" />
+
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+		/>
+
 		<title>Reproductor de musica</title>
 	</head>
 	<body>
-		<h1>Reproductor de musica</h1>
-		<audio id="reproductor" src="" controls></audio>
-		<div class="controls-container">
-			<button id="prevBtn">Previous</button>
-			<button id="playBtn">Play</button>
-			<button id="pauseBtn">Pause</button>
-			<button id="nextBtn">Next</button>
-		</div>
+		<main class="reproductor-container">
+			<h1>Reproductor de musica</h1>
+			<div class="audio-container">
+				<audio id="reproductor" src="" controls></audio>
+			</div>
+			<div class="controls-container">
+				<button class="btn" id="prevBtn">
+					<i class="fa-solid fa-backward"></i>
+				</button>
 
+				<button class="btn" id="playBtn">
+					<i class="fa-solid fa-play"></i>
+				</button>
+
+				<button class="btn" id="nextBtn">
+					<i class="fa-solid fa-forward"></i>
+				</button>
+			</div>
+		</main>
 		<script src="JS/renderer.js"></script>
 	</body>
 </html>

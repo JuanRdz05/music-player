@@ -1,0 +1,112 @@
+body {
+	background-color: #0b0b0b;
+	color: #f5f5f5;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+	min-height: 100vh;
+	margin: 0;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Contenedor principal */
+
+.reproductor-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	background-color: #151515;
+
+	width: 400px;
+	min-height: 150px;
+
+	padding: 35px;
+
+	border: 1px solid #292929;
+	border-radius: 18px;
+
+	gap: 20px;
+
+	box-shadow:
+		0 10px 30px rgba(0, 0, 0, 0.6),
+		0 0 25px rgba(230, 57, 70, 0.08);
+}
+
+/* Título */
+
+.reproductor-container h1 {
+	margin: 0;
+
+	font-size: 28px;
+	font-weight: 600;
+
+	letter-spacing: 0.5px;
+}
+
+/* Contenedor del audio */
+
+.audio-container {
+	width: 100%;
+}
+
+/* Reproductor */
+
+audio {
+	width: 100%;
+}
+
+/* Controles */
+
+.controls-container {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+/* Botones */
+
+.btn {
+	padding: 12px 15px;
+
+	border: 1px solid #333;
+	border-radius: 8px;
+
+	background-color: #202020;
+	color: #f5f5f5;
+
+	cursor: pointer;
+
+	font-weight: 600;
+	font-size: 16px;
+
+	transition:
+		background-color 0.25s ease,
+		border-color 0.25s ease,
+		color 0.25s ease,
+		transform 0.25s ease,
+		box-shadow 0.25s ease;
+}
+
+/* Hover */
+
+.btn:hover {
+	background-color: #e63946;
+	border-color: #e63946;
+	color: #ffffff;
+
+	transform: translateY(-2px);
+
+	box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+}
+
+/* Cuando se presiona */
+
+.btn:active {
+	transform: translateY(0);
+
+	box-shadow: 0 2px 8px rgba(230, 57, 70, 0.2);
+}
