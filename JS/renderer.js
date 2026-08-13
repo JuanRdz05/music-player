@@ -26,6 +26,9 @@ const songImage = document
 	.getElementById("song-image")
 	.getElementsByTagName("img")[0];
 
+//Fondo
+const fondo = document.querySelector(".fondo-container");
+
 let canciones = [];
 let indiceCancion = 0;
 
@@ -33,6 +36,10 @@ function actualizarConAnimacion() {
 	//Animación del titulo de la canción
 	songName.classList.remove("swipe-in");
 	songName.classList.add("swipe-out");
+
+	//Animación del fondo
+	fondo.classList.remove("fade-in");
+	fondo.classList.add("fade-out");
 
 	//Animación de la imagen de la canción
 	songImage.classList.remove("swipe-in");
@@ -46,6 +53,9 @@ function actualizarConAnimacion() {
 
 		songImage.classList.remove("swipe-out");
 		songImage.classList.add("swipe-in");
+
+		fondo.classList.remove("fade-out");
+		fondo.classList.add("fade-in");
 	}, 250);
 }
 
