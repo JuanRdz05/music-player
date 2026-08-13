@@ -11,44 +11,55 @@
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 		/>
 
-		<title>Reproductor de musica</title>
+		<title>Reproductor de música</title>
 	</head>
 	<body>
 		<div class="fondo-container fade-in">
 			<div class="filtro"></div>
 		</div>
 		<main class="reproductor-container">
-			<h1>Reproductor de musica</h1>
 			<div class="audio-container">
 				<audio id="reproductor" src=""></audio>
 			</div>
 
-			<div class="image-container swipe-in" id="song-image">
-				<img src="" alt="Imagen de la canción" />
-			</div>
+			<div class="layout-container">
+				<div class="image-container swipe-in" id="song-image">
+					<img src="" alt="Imagen de la canción" />
+				</div>
 
-			<div class="infor-container">
-				<p id="song-name" class="swipe-in"></p>
-			</div>
+				<div class="right-panel">
+					<div class="info-container">
+						<p id="song-name" class="swipe-in"></p>
+					</div>
 
-			<div class="progress-container">
-				<span id="currentTime">0:00</span>
-				<input type="range" id="progressBar" value="0" step="0.1" min="0" />
-				<span id="durationTime">0:00</span>
-			</div>
+					<div class="progress-container">
+						<span id="currentTime">0:00</span>
+						<input type="range" id="progressBar" value="0" step="0.1" min="0" />
+						<span id="durationTime">0:00</span>
+					</div>
 
-			<div class="controls-container">
-				<button class="btn" id="prevBtn">
-					<i class="fa-solid fa-backward"></i>
-				</button>
+					<div class="controls-container">
+						<button class="btn" id="prevBtn">
+							<i class="fa-solid fa-backward"></i>
+						</button>
 
-				<button class="btn" id="playBtn">
-					<i class="fa-solid fa-play"></i>
-				</button>
+						<button class="btn" id="playBtn">
+							<i class="fa-solid fa-play"></i>
+						</button>
 
-				<button class="btn" id="nextBtn">
-					<i class="fa-solid fa-forward"></i>
-				</button>
+						<button class="btn" id="nextBtn">
+							<i class="fa-solid fa-forward"></i>
+						</button>
+
+						<input
+							type="range"
+							id="volumeSlider"
+							value="100"
+							min="0"
+							max="100"
+						/>
+					</div>
+				</div>
 			</div>
 		</main>
 		<!-- <section class="lista-container">

@@ -5,6 +5,7 @@ const reproductor = document.querySelector("audio");
 const playBtn = document.getElementById("playBtn");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
+const volume = document.getElementById("volumeSlider");
 
 //Elementos del reproductor
 const progressBar = document.getElementById("progressBar");
@@ -114,15 +115,24 @@ async function iniciarReproductor() {
 	reproductor.addEventListener("loadedmetadata", () => {
 		progressBar.max = reproductor.duration;
 		durationTimeEl.textContent = formatTime(reproductor.duration);
+		const porcentaje = (progressBar.value / progressBar.max) * 100;
+		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
+		progressBar.style.background = colorFondo;
 	});
 
 	reproductor.addEventListener("timeupdate", () => {
 		progressBar.value = reproductor.currentTime;
 		currentTimeEl.textContent = formatTime(reproductor.currentTime);
+		const porcentaje = (progressBar.value / progressBar.max) * 100;
+		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
+		progressBar.style.background = colorFondo;
 	});
 
 	progressBar.addEventListener("input", () => {
 		reproductor.currentTime = progressBar.value;
+		const porcentaje = (progressBar.value / progressBar.max) * 100;
+		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
+		progressBar.style.background = colorFondo;
 	});
 
 	reproductor.addEventListener("ended", () => {
@@ -131,6 +141,14 @@ async function iniciarReproductor() {
 		currentTimeEl.textContent = "0:00";
 		nextBtn.click();
 	});
+
+	volume.addEventListener("input", () => {
+		reproductor.volume = volume.value / 100;
+		// Actualiza el fondo para colorear la parte izquierda del slider
+		volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
+	});
+	// Para que se dibuje correctamente desde el inicio (al 100%)
+	volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
 }
 
 iniciarReproductor();
