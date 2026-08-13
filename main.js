@@ -9,17 +9,25 @@ function createWindow() {
 		height: 600,
 		webPreferences: {
 			nodeIntegration: true,
-			contextIsolation: false
+			contextIsolation: false,
 		},
 	});
 
 	win.loadFile("index.html");
 }
 
+//Crear un objeto por canción con sus propiedades
+
 ipcMain.handle("get-songs", () => {
 	const musicPath = path.join(__dirname, "music");
-	console.log("Ruta de la carpeta de musica:", musicPath);
-	return fs.readdirSync(musicPath);
+	const canciones = fs.readdirSync(musicPath);
+
+	return canciones.map((cancion) => {
+		return {
+			nombre: cancion,
+			imagen: `img/${cancion.replace(".mp3", ".png")}`,
+		};
+	});
 });
 
 app.whenReady().then(createWindow);
