@@ -2,6 +2,13 @@ const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
+//Generador de miniaturas
+const {
+	generateAllThumbnails,
+	getThumbnailPath,
+	CONFIG,
+} = require("./JS/image-reductor");
+
 function createWindow() {
 	let pathPreload = path.join(__dirname, "preload.js");
 	const win = new BrowserWindow({
@@ -41,7 +48,24 @@ ipcMain.handle("get-songs", () => {
 	});
 });
 
-app.whenReady().then(createWindow);
+ipcMain.handle("get-thumbnail", async (event, imagePath) => {
+	try {
+		const thumbPath = await getThumbnailPath(imagePath);
+		return thumbPath;
+	} catch (error) {
+		console.error("Error generando miniatura:", error);
+		return null;
+	}
+});
+
+//Cuando la app esté lista
+app.whenReady().then(async () => {
+	console.log("Generando miniaturas...");
+	await generateAllThumbnails();
+	console.log("Miniaturas listas");
+
+	createWindow();
+});
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") app.quit();
