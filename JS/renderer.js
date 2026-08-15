@@ -25,9 +25,9 @@ const formatTime = require("./JS/formatTime.js");
 //Nombre de las canciones
 const songName = document.getElementById("song-name");
 //Imagenes de las canciones
-const songImage = document
-	.getElementById("song-image")
-	.getElementsByTagName("img")[0];
+const songImageContainer = document.getElementById("song-image");
+const songImageSwipe = songImageContainer.querySelector(".image-swipe");
+const songImage = songImageContainer.getElementsByTagName("img")[0];
 
 //Fondo
 const fondo = document.querySelector(".fondo-container");
@@ -44,9 +44,9 @@ function actualizarConAnimacion() {
 	fondo.classList.remove("fade-in");
 	fondo.classList.add("fade-out");
 
-	//Animación de la imagen de la canción
-	songImage.classList.remove("swipe-in");
-	songImage.classList.add("swipe-out");
+	//Animación de la imagen de la canción (en el wrapper, no en el img)
+	songImageSwipe.classList.remove("swipe-in");
+	songImageSwipe.classList.add("swipe-out");
 
 	setTimeout(() => {
 		actualizarNombreCancion(canciones, indiceCancion, songName);
@@ -54,8 +54,8 @@ function actualizarConAnimacion() {
 		songName.classList.remove("swipe-out");
 		songName.classList.add("swipe-in");
 
-		songImage.classList.remove("swipe-out");
-		songImage.classList.add("swipe-in");
+		songImageSwipe.classList.remove("swipe-out");
+		songImageSwipe.classList.add("swipe-in");
 
 		fondo.classList.remove("fade-out");
 		fondo.classList.add("fade-in");
@@ -146,11 +146,34 @@ async function iniciarReproductor() {
 
 	volume.addEventListener("input", () => {
 		reproductor.volume = volume.value / 100;
-		// Actualiza el fondo para colorear la parte izquierda del slider
 		volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
 	});
-	// Para que se dibuje correctamente desde el inicio (al 100%)
+
 	volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
+
+	//Pausa al presionar la imagen
+	songImageContainer.addEventListener("click", () => {
+		songImage.classList.remove("bounce");
+		void songImage.offsetWidth;
+		songImage.classList.add("bounce");
+
+		songImage.addEventListener(
+			"animationend",
+			() => {
+				songImage.classList.remove("bounce");
+			},
+			{ once: true },
+		);
+
+		// Play / Pausa
+		if (reproductor.paused) {
+			reproductor.play();
+			playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+		} else {
+			reproductor.pause();
+			playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+		}
+	});
 
 	//Comando pausar y reproducir
 	document.addEventListener("keydown", (e) => {
