@@ -13,61 +13,115 @@
 
 		<title>Reproductor de música</title>
 	</head>
+
 	<body>
 		<div class="fondo-container fade-in">
 			<div class="filtro"></div>
 		</div>
-		<main class="reproductor-container">
-			<div class="audio-container">
-				<audio id="reproductor" src=""></audio>
-			</div>
 
-			<div class="layout-container">
-				<div class="image-container" id="song-image">
-					<div class="image-swipe">
-						<img src="" alt="Imagen de la canción" />
-					</div>
+		<!-- Contenedor general de la aplicación -->
+		<div class="app-container">
+			<!-- Reproductor -->
+			<main class="reproductor-container">
+				<div class="audio-container">
+					<audio id="reproductor" src=""></audio>
 				</div>
 
-				<div class="right-panel">
-					<div class="info-container">
-						<p id="song-name" class="swipe-in"></p>
+				<div class="layout-container">
+					<div class="image-container" id="song-image">
+						<div class="image-swipe">
+							<img src="" alt="Imagen de la canción" />
+						</div>
 					</div>
 
-					<div class="progress-container">
-						<span id="currentTime">0:00</span>
-						<input type="range" id="progressBar" value="0" step="0.1" min="0" />
-						<span id="durationTime">0:00</span>
-					</div>
+					<div class="right-panel">
+						<div class="info-container">
+							<p id="song-name" class="swipe-in"></p>
+						</div>
 
-					<div class="controls-container">
-						<button class="btn" id="prevBtn">
-							<i class="fa-solid fa-backward"></i>
-						</button>
+						<div class="progress-container">
+							<span id="currentTime">0:00</span>
 
-						<button class="btn" id="playBtn">
-							<i class="fa-solid fa-play"></i>
-						</button>
+							<input
+								type="range"
+								id="progressBar"
+								value="0"
+								step="0.1"
+								min="0"
+							/>
 
-						<button class="btn" id="nextBtn">
-							<i class="fa-solid fa-forward"></i>
-						</button>
+							<span id="durationTime">0:00</span>
+						</div>
 
-						<input
-							type="range"
-							id="volumeSlider"
-							value="100"
-							min="0"
-							max="100"
-						/>
+						<div class="controls-container">
+							<button class="btn" id="prevBtn">
+								<i class="fa-solid fa-backward"></i>
+							</button>
+
+							<button class="btn" id="playBtn">
+								<i class="fa-solid fa-play"></i>
+							</button>
+
+							<button class="btn" id="nextBtn">
+								<i class="fa-solid fa-forward"></i>
+							</button>
+
+							<input
+								type="range"
+								id="volumeSlider"
+								value="100"
+								min="0"
+								max="100"
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
-		</main>
-		<!-- <section class="lista-container">
-			<h2 class="lista-title">Lista de reproducción</h2>
-			<ul class="lista-canciones" id="lista-canciones"></ul>
-		</section> -->
+			</main>
+
+			<!-- Panel lateral -->
+			<aside class="panel-derecho">
+				<div class="opciones-contenedor">
+					<button class="btn-opciones active" id="song-queue">
+						<i class="fa-solid fa-list"></i>
+					</button>
+
+					<button class="btn-opciones" id="btn-lyric">
+						<i class="fa-solid fa-music"></i>
+					</button>
+				</div>
+
+				<div class="panel-content">
+					<section id="playlistView" class="panel-view active">
+						<!--Tarjeta de ejemplo-->
+						<div class="playlist-card">
+							<div class="image-playlist-song">
+								<img src="img/Dance!.png" alt="PlayList Image" />
+							</div>
+
+							<div class="playlist-text">
+								<p class="title">Dance!</p>
+								<label class="duration-playlist" for="durationTime">3:23</label>
+							</div>
+						</div>
+
+						<!--Tarjeta de ejemplo-->
+						<div class="playlist-card">
+							<div class="image-playlist-song">
+								<img src="img/Full Moon Full Life.png" alt="PlayList Image" />
+							</div>
+
+							<div class="playlist-text">
+								<p class="title">Dance!</p>
+								<label class="duration-playlist" for="durationTime">3:23</label>
+							</div>
+						</div>
+					</section>
+
+					<section id="lyricsView" class="panel-view">Esta es la letra</section>
+				</div>
+			</aside>
+		</div>
+
 		<script src="JS/renderer.js"></script>
 	</body>
 </html>

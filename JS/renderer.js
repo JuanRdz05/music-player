@@ -32,6 +32,13 @@ const songImage = songImageContainer.getElementsByTagName("img")[0];
 //Fondo
 const fondo = document.querySelector(".fondo-container");
 
+//Panel derecho
+const playlistBtn = document.getElementById("song-queue");
+const lyricsBtn = document.getElementById("btn-lyric");
+
+const playlistView = document.getElementById("playlistView");
+const lyricsView = document.getElementById("lyricsView");
+
 let canciones = [];
 let indiceCancion = 0;
 
@@ -215,6 +222,22 @@ async function iniciarReproductor() {
 			volume.value = Number(volume.value) - 10;
 			volume.dispatchEvent(new Event("input"));
 		}
+	});
+
+	playlistBtn.addEventListener("click", () => {
+		playlistView.classList.add("active");
+		lyricsView.classList.remove("active");
+
+		playlistBtn.classList.add("active");
+		lyricsBtn.classList.remove("active");
+	});
+
+	lyricsBtn.addEventListener("click", () => {
+		lyricsView.classList.add("active");
+		playlistView.classList.remove("active");
+
+		lyricsBtn.classList.add("active");
+		playlistBtn.classList.remove("active");
 	});
 }
 
