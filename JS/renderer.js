@@ -1,3 +1,6 @@
+//Llamada a los recursos
+const { ipcRenderer } = require("electron");
+
 //Reproductor
 const reproductor = document.querySelector("audio");
 
@@ -12,8 +15,7 @@ const progressBar = document.getElementById("progressBar");
 const currentTimeEl = document.getElementById("currentTime");
 const durationTimeEl = document.getElementById("durationTime");
 
-//Llamada a los recursos
-const { ipcRenderer } = require("electron");
+//Funciones del reproductor
 const {
 	actualizarNombreCancion,
 	actualizarImagenCancion,
@@ -149,6 +151,48 @@ async function iniciarReproductor() {
 	});
 	// Para que se dibuje correctamente desde el inicio (al 100%)
 	volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
+
+	//Comando pausar y reproducir
+	document.addEventListener("keydown", (e) => {
+		if (e.code === "Space") {
+			e.preventDefault();
+			if (reproductor.paused) {
+				reproductor.play();
+				playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+			} else if (reproductor.played) {
+				reproductor.pause();
+				playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+			}
+		}
+	});
+
+	//Presionar siguiente canción
+	document.addEventListener("keydown", (e) => {
+		if (e.ctrlKey && e.code === "ArrowRight") {
+			e.preventDefault();
+			nextBtn.click();
+		}
+
+		if (e.ctrlKey && e.code === "ArrowLeft") {
+			e.preventDefault();
+			prevBtn.click();
+		}
+	});
+
+	//Subir y bajar volumen
+	document.addEventListener("keydown", (e) => {
+		if (e.ctrlKey && e.code === "ArrowUp") {
+			e.preventDefault();
+			volume.value = Number(volume.value) + 10;
+			volume.dispatchEvent(new Event("input"));
+		}
+
+		if (e.ctrlKey && e.code === "ArrowDown") {
+			e.preventDefault();
+			volume.value = Number(volume.value) - 10;
+			volume.dispatchEvent(new Event("input"));
+		}
+	});
 }
 
 iniciarReproductor();
