@@ -41,10 +41,11 @@ ipcMain.handle("get-songs", () => {
 	const musicPath = path.join(__dirname, "music");
 	const canciones = fs.readdirSync(musicPath);
 
-	return canciones.map((cancion) => {
+	return canciones.map((cancion, index) => {
 		const buffer = fs.readFileSync(path.join(musicPath, cancion));
 		const duration = getMP3Duration(buffer);
 		return {
+			id: index,
 			nombre: cancion,
 			imagen: `img/${cancion.replace(".mp3", ".png")}`,
 			duration: duration / 1000,

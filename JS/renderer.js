@@ -75,6 +75,26 @@ async function cargarCanciones() {
 	return canciones;
 }
 
+function reproducirCancion(indice) {
+	indiceCancion = indice;
+	reproductor.src = "music/" + canciones[indiceCancion].nombre;
+	reproductor.currentTime = 0;
+	playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+	reproductor.play();
+	marcarTarjetaActiva(canciones[indiceCancion].id);
+}
+
+// Resalta visualmente en la playlist cuál canción está sonando.
+function marcarTarjetaActiva(id) {
+	const tarjetas = playlistView.querySelectorAll(".playlist-card");
+	tarjetas.forEach((tarjeta) => {
+		tarjeta.classList.toggle(
+			"playing",
+			Number(tarjeta.dataset.id) === Number(id),
+		);
+	});
+}
+
 async function iniciarReproductor() {
 	canciones = await cargarCanciones();
 
@@ -84,31 +104,41 @@ async function iniciarReproductor() {
 
 	//Cancion siguiente
 	nextBtn.addEventListener("click", () => {
-		indiceCancion++;
+		let nuevoIndice = indiceCancion + 1;
 		//Si el indice de la cancion es mayor que el tamño del arreglo, entonces volvemos al inicio
-		if (indiceCancion > canciones.length - 1) {
-			indiceCancion = 0;
+		if (nuevoIndice > canciones.length - 1) {
+			nuevoIndice = 0;
 		}
 		actualizarConAnimacion();
-		reproductor.src = "music/" + canciones[indiceCancion].nombre;
-		playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-		reproductor.play();
+		reproducirCancion(nuevoIndice);
 	});
 
 	//Cancion anterior
 	prevBtn.addEventListener("click", () => {
+		let nuevoIndice = indiceCancion;
 		if (progressBar.value <= 3) {
-			indiceCancion--;
+			nuevoIndice = indiceCancion - 1;
 			//Si el indice de la cancion es menor a 0, entonces volvemos al final
-			if (indiceCancion < 0) {
-				indiceCancion = canciones.length - 1;
+			if (nuevoIndice < 0) {
+				nuevoIndice = canciones.length - 1;
 			}
 			actualizarConAnimacion();
 		}
-		reproductor.src = "music/" + canciones[indiceCancion].nombre;
-		reproductor.currentTime = 0;
-		playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-		reproductor.play();
+		reproducirCancion(nuevoIndice);
+	});
+	playlistView.addEventListener("click", (e) => {
+		const tarjeta = e.target.closest(".playlist-card");
+		if (!tarjeta) return;
+
+		const id = Number(tarjeta.dataset.id);
+		const indiceSeleccionado = canciones.findIndex(
+			(cancion) => cancion.id === id,
+		);
+		if (indiceSeleccionado === -1) return;
+		if (indiceSeleccionado !== indiceCancion) {
+			actualizarConAnimacion();
+		}
+		reproducirCancion(indiceSeleccionado);
 	});
 
 	playBtn.addEventListener("click", () => {
@@ -186,6 +216,7 @@ async function iniciarReproductor() {
 	canciones.forEach((cancion) => {
 		const playlistCard = document.createElement("div");
 		playlistCard.classList.add("playlist-card");
+		playlistCard.dataset.id = cancion.id;
 		playlistCard.innerHTML = `
 			<div class="image-playlist-song">
 				<img src="img/thumbnails/${cancion.nombre.replace(".mp3", ".png")}" alt="PlayList Image" />
@@ -197,6 +228,9 @@ async function iniciarReproductor() {
 		`;
 		playlistView.appendChild(playlistCard);
 	});
+
+	// Marca la canción inicial como activa en la playlist
+	marcarTarjetaActiva(canciones[indiceCancion].id);
 
 	//Comando pausar y reproducir
 	document.addEventListener("keydown", (e) => {

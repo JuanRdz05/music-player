@@ -472,6 +472,31 @@ audio {
 	color: var(--blanco);
 }
 
+#playlistView {
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+#playlistView::-webkit-scrollbar {
+	width: 3px;
+}
+
+#playlistView::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+#playlistView::-webkit-scrollbar-thumb {
+	background-color: rgba(230, 57, 70, 0.4);
+	border-radius: 10px;
+}
+
+#playlistView::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(230, 57, 70, 0.7);
+}
+
 /*Tarjetas de playlist*/
 
 .playlist-card {
@@ -516,6 +541,22 @@ audio {
 	margin: 0;
 	font-size: 14px;
 	color: #a0a0a0;
+}
+
+.playlist-card {
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.playlist-card:hover {
+	background: rgba(230, 57, 70, 0.1);
+}
+
+.playlist-card.playing {
+	border-color: var(--rojo);
+	background: rgba(230, 57, 70, 0.15);
 }
 
 /*Vista de las letras */
