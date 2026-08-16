@@ -182,6 +182,22 @@ async function iniciarReproductor() {
 		}
 	});
 
+	//Cargar la lista de canciones
+	canciones.forEach((cancion) => {
+		const playlistCard = document.createElement("div");
+		playlistCard.classList.add("playlist-card");
+		playlistCard.innerHTML = `
+			<div class="image-playlist-song">
+				<img src="img/thumbnails/${cancion.nombre.replace(".mp3", ".png")}" alt="PlayList Image" />
+			</div>
+			<div class="playlist-text">
+				<p>${cancion.nombre.replace(".mp3", "")}</p>
+				<label class="duration-playlist" for="durationTime">${formatTime(cancion.duration)}</label>
+			</div>
+		`;
+		playlistView.appendChild(playlistCard);
+	});
+
 	//Comando pausar y reproducir
 	document.addEventListener("keydown", (e) => {
 		if (e.code === "Space") {

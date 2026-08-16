@@ -478,15 +478,15 @@ audio {
 	display: flex;
 	align-items: center;
 	gap: 15px;
-	padding: 12px;
+	padding: 10px;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 10px;
+	border-radius: 5px;
 	background: rgba(20, 20, 20, 0.6);
 }
 
 .image-playlist-song {
-	width: 75px;
-	height: 75px;
+	width: 65px;
+	height: 65px;
 	border-radius: 10px;
 	overflow: hidden;
 	flex-shrink: 0;
@@ -502,7 +502,7 @@ audio {
 .playlist-text {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 1px;
 	width: 100%;
 }
 
@@ -513,6 +513,23 @@ audio {
 }
 
 .duration-playlist {
+	margin: 0;
 	font-size: 14px;
 	color: #a0a0a0;
+}
+
+/*Vista de las letras */
+
+.lyrics-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+}
+
+.lyrics-song-container {
+	max-height: 200px;
+	width: 100%;
+	overflow-y: auto;
 }

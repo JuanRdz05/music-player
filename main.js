@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const getMP3Duration = require("get-mp3-duration");
 
 //Generador de miniaturas
 const {
@@ -41,9 +42,12 @@ ipcMain.handle("get-songs", () => {
 	const canciones = fs.readdirSync(musicPath);
 
 	return canciones.map((cancion) => {
+		const buffer = fs.readFileSync(path.join(musicPath, cancion));
+		const duration = getMP3Duration(buffer);
 		return {
 			nombre: cancion,
 			imagen: `img/${cancion.replace(".mp3", ".png")}`,
+			duration: duration / 1000,
 		};
 	});
 });
