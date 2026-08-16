@@ -1,0 +1,32 @@
+[
+	{
+		"archivo": "Dance!.mp3",
+		"nombre": "Dance!",
+		"artista": "Shihoko Hirata, Lotus Juice",
+		"album": "Persona 4: Dancing All Night Original Soundtrack"
+	},
+	{
+		"archivo": "Full Moon Full Life.mp3",
+		"nombre": "Full Moon Full Life",
+		"artista": "Azumi Takahashi, Lotus Juice & ATLUS Sound Team",
+		"album": "Persona 3 Reload Original Soundtrack"
+	},
+	{
+		"archivo": "Heaven.mp3",
+		"nombre": "Heaven",
+		"artista": "Shoji Meguro",
+		"album": "Persona 4 Soundtrack"
+	},
+	{
+		"archivo": "Memories of You.mp3",
+		"nombre": "Memories of You -Reload-",
+		"artista": "アトラスサウンドチーム & 高橋あず美",
+		"album": "PERSONA3 RELOAD ORIGINAL SOUNDTRACK"
+	},
+	{
+		"archivo": "Your affection.mp3",
+		"nombre": "Your Affection",
+		"artista": "Shihoko Hirata",
+		"album": "Persona 4"
+	}
+]

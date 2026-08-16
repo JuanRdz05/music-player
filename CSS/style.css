@@ -11,6 +11,7 @@
 body {
 	background-color: var(--negro);
 	color: var(--blanco);
+
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
 	min-height: 100vh;
@@ -19,6 +20,16 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.app-container {
+	display: flex;
+
+	align-items: center;
+
+	gap: 20px;
+
+	width: max-content;
 }
 
 /* Contenedor principal */
@@ -183,17 +194,51 @@ audio {
 	width: 475px;
 	flex-shrink: 0;
 	align-self: stretch;
-	border-radius: 0;
+	border-radius: 18px 0 0 18px;
 	overflow: hidden;
 }
 
+/* Capa intermedia: swipe-in / swipe-out (translateY) */
+.image-swipe {
+	width: 100%;
+	height: 100%;
+}
+
+.image-swipe.swipe-out {
+	animation: swipeOutUp 0.25s ease-in forwards;
+}
+
+.image-swipe.swipe-in {
+	animation: swipeInUp 0.25s ease-out forwards;
+}
+
+/* Capa interior: zoom + bounce (scale), en el img */
 .image-container img {
+	--zoom: 1.08;
+
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-}
-/* Hover */
+	display: block;
 
+	transform: scale(var(--zoom));
+	transition:
+		transform 0.25s ease-in-out,
+		filter 0.25s ease-in-out;
+	filter: brightness(0.85);
+}
+
+.image-container:hover img {
+	--zoom: 1.12;
+	filter: brightness(1);
+	cursor: pointer;
+}
+
+.image-container img.bounce {
+	animation: bounce 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* Hover */
 .btn:hover {
 	background-color: #e63946;
 	border-color: #e63946;
@@ -316,4 +361,260 @@ audio {
 	font-size: 25px;
 	font-weight: 600;
 	margin: 0;
+}
+
+/*Efecto de rebote*/
+.bounce {
+	animation: bounce 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+@keyframes bounce {
+	0% {
+		transform: scale(var(--zoom));
+	}
+	30% {
+		transform: scale(calc(var(--zoom) * 0.94));
+	}
+	60% {
+		transform: scale(calc(var(--zoom) * 1.04));
+	}
+	100% {
+		transform: scale(var(--zoom));
+	}
+}
+
+/*Contenido del panel derecho*/
+
+.panel-content {
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+}
+
+.panel-view {
+	position: absolute;
+	inset: 0;
+
+	opacity: 0;
+	visibility: hidden;
+}
+
+/* La vista de playlist necesita scroll propio cuando hay muchas canciones */
+#playlistView {
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	padding: 12px;
+}
+
+/* Scrollbar con estilo acorde al tema (Chrome/Edge/Electron) */
+#playlistView::-webkit-scrollbar,
+#lyricsView::-webkit-scrollbar {
+	width: 6px;
+}
+
+#playlistView::-webkit-scrollbar-track,
+#lyricsView::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+#playlistView::-webkit-scrollbar-thumb,
+#lyricsView::-webkit-scrollbar-thumb {
+	background-color: rgba(230, 57, 70, 0.4);
+	border-radius: 10px;
+}
+
+#playlistView::-webkit-scrollbar-thumb:hover,
+#lyricsView::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(230, 57, 70, 0.7);
+}
+
+/* Vista de letras */
+#lyricsView {
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 20px;
+}
+
+.lyrics-text {
+	margin: 0;
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 1.8;
+	color: var(--blanco);
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.lyrics-mensaje {
+	margin: 0;
+	font-size: 14px;
+	color: #a0a0a0;
+	text-align: center;
+	padding-top: 40px;
+}
+
+/* Letra sincronizada */
+.lyrics-synced {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	/* Espacio arriba/abajo para que la primera y última línea también
+	   puedan quedar centradas al hacer scroll */
+	padding: 160px 0;
+}
+
+.lyrics-line {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 500;
+	color: #6b6b6b;
+	text-align: center;
+	transition:
+		color 0.25s ease,
+		transform 0.25s ease,
+		font-size 0.25s ease;
+}
+
+.lyrics-line.active {
+	color: var(--blanco);
+	font-size: 19px;
+	font-weight: 700;
+	transform: scale(1.04);
+}
+
+.panel-view.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+.panel-derecho {
+	width: 320px;
+	height: 500px;
+
+	flex-shrink: 0;
+
+	display: flex;
+	flex-direction: column;
+
+	background: rgba(20, 20, 20, 0.6);
+
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	border: 1px solid rgba(255, 255, 255, 0.1);
+
+	border-radius: 18px;
+
+	overflow: hidden;
+
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.4),
+		0 0 25px rgba(230, 57, 70, 0.08);
+}
+
+.opciones-contenedor {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	gap: 10px;
+
+	padding: 12px;
+
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-opciones {
+	width: 42px;
+	height: 42px;
+
+	border: none;
+	border-radius: 10px;
+
+	background: transparent;
+	color: var(--blanco);
+
+	cursor: pointer;
+
+	font-size: 16px;
+
+	transition:
+		background-color 0.25s ease,
+		color 0.25s ease,
+		transform 0.25s ease;
+}
+
+.btn-opciones:hover {
+	background-color: rgba(255, 255, 255, 0.08);
+
+	transform: translateY(-2px);
+}
+
+.btn-opciones.active {
+	background-color: var(--rojo);
+	color: var(--blanco);
+}
+
+/*Tarjetas de playlist*/
+
+.playlist-card {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	background: rgba(20, 20, 20, 0.6);
+
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.playlist-card:hover {
+	background: rgba(230, 57, 70, 0.1);
+}
+
+.playlist-card.playing {
+	border-color: var(--rojo);
+	background: rgba(230, 57, 70, 0.15);
+}
+
+.image-playlist-song {
+	width: 75px;
+	height: 75px;
+	border-radius: 10px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.image-playlist-song img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.playlist-text {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	width: 100%;
+}
+
+.playlist-text .title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.duration-playlist {
+	font-size: 14px;
+	color: #a0a0a0;
 }
