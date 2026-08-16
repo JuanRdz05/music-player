@@ -48,7 +48,7 @@ let elementosLineas = []; // <p> correspondiente a cada línea, mismo índice
 let indiceLineaActual = -1;
 
 /**
- * Convierte texto en formato LRC (ej: "[01:23.45] Letra de la línea")
+ * Convierte texto en formato LRC
  * a un arreglo ordenado de { time, text }, donde time está en segundos.
  * Soporta líneas con más de un timestamp (coros repetidos).
  */
@@ -461,6 +461,15 @@ async function iniciarReproductor() {
 		if (e.ctrlKey && e.code === "ArrowDown") {
 			e.preventDefault();
 			volume.value = Number(volume.value) - 10;
+			volume.dispatchEvent(new Event("input"));
+		}
+	});
+
+	//Mutear la canción
+	document.addEventListener("keydown", (e) => {
+		if (e.ctrlKey && e.code === "KeyM") {
+			e.preventDefault();
+			volume.value = 0;
 			volume.dispatchEvent(new Event("input"));
 		}
 	});
