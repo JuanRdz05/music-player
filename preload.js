@@ -5,3 +5,9 @@ contextBridge.exposeInMainWorld("music", {
 		return ipcRenderer.invoke("get-songs");
 	},
 });
+
+contextBridge.exposeInMainWorld("lyrics", {
+	getLyrics: () => {
+		return ipcRenderer.invoke("get-lyrics");
+	},
+});

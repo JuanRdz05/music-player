@@ -39,15 +39,28 @@ function createWindow() {
 //Crear un objeto por canción con sus propiedades
 ipcMain.handle("get-songs", () => {
 	const musicPath = path.join(__dirname, "music");
-	const canciones = fs.readdirSync(musicPath);
+	const metadataPath = path.join(__dirname, "metadata", "songs.json");
 
-	return canciones.map((cancion, index) => {
-		const buffer = fs.readFileSync(path.join(musicPath, cancion));
+	const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8"));
+
+	return metadata.map((cancion, index) => {
+		const archivoPath = path.join(musicPath, cancion.archivo);
+
+		const buffer = fs.readFileSync(archivoPath);
 		const duration = getMP3Duration(buffer);
+
 		return {
 			id: index,
-			nombre: cancion,
-			imagen: `img/${cancion.replace(".mp3", ".png")}`,
+			nombre: cancion.nombre,
+			artista: cancion.artista,
+			album: cancion.album,
+
+			archivo: `music/${cancion.archivo}`,
+
+			imagen: `img/${cancion.archivo.replace(".mp3", ".png")}`,
+
+			thumbnail: `img/thumbnails/${cancion.archivo.replace(".mp3", ".png")}`,
+
 			duration: duration / 1000,
 		};
 	});
@@ -62,6 +75,46 @@ ipcMain.handle("get-thumbnail", async (event, imagePath) => {
 		return null;
 	}
 });
+
+const URL = "https://lrclib.net/api/get";
+
+ipcMain.handle(
+	"get-lyrics",
+	async (event, { nombre, artista, album, duration }) => {
+		try {
+			const params = new URLSearchParams({
+				track_name: nombre,
+				artist_name: artista,
+				album_name: album,
+				duration: Math.round(duration),
+			});
+
+			const response = await fetch(`${URL}?${params.toString()}`, {
+				headers: {
+					"User-Agent": "ReproductorMusica/1.0.0",
+				},
+			});
+
+			if (response.status === 404) {
+				return { found: false };
+			}
+			if (!response.ok) {
+				throw new Error(`LRCLIB respondió con estado ${response.status}`);
+			}
+
+			const data = await response.json();
+
+			return {
+				found: true,
+				instrumental: data.instrumental,
+				syncedLyrics: data.syncedLyrics,
+			};
+		} catch (error) {
+			console.error("Error obteniendo letra desde LRCLIB:", error);
+			return { found: false, error: error.message };
+		}
+	},
+);
 
 //Cuando la app esté lista
 app.whenReady().then(async () => {
