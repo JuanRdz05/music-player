@@ -15,89 +15,143 @@
 	</head>
 
 	<body>
-		<div class="fondo-container fade-in">
-			<div class="filtro"></div>
-		</div>
-
-		<!-- Contenedor general de la aplicación -->
-		<div class="app-container">
-			<!-- Reproductor -->
-			<main class="reproductor-container">
-				<div class="audio-container">
-					<audio id="reproductor" src=""></audio>
+		<!-- MAIN LAYOUT (YOUTUBE MUSIC STYLE) -->
+		<div class="app-layout">
+			<!-- Sidebar -->
+			<nav class="sidebar">
+				<div class="sidebar-logo">
+					<h2>MusicApp</h2>
 				</div>
+				<ul class="sidebar-nav">
+					<li><a href="#" data-route="home" class="nav-link active"><i class="fa-solid fa-house"></i> Inicio</a></li>
+					<li><a href="#" data-route="explore" class="nav-link"><i class="fa-solid fa-compass"></i> Explorar</a></li>
+					<li><a href="#" data-route="library" class="nav-link"><i class="fa-solid fa-book"></i> Biblioteca</a></li>
+				</ul>
+			</nav>
 
-				<div class="layout-container">
-					<div class="image-container" id="song-image">
-						<div class="image-swipe">
-							<img src="" alt="Imagen de la canción" />
-						</div>
-					</div>
-
-					<div class="right-panel">
-						<div class="info-container">
-							<p id="song-name" class="swipe-in"></p>
-						</div>
-
-						<div class="progress-container">
-							<span id="currentTime">0:00</span>
-
-							<input
-								type="range"
-								id="progressBar"
-								value="0"
-								step="0.1"
-								min="0"
-							/>
-
-							<span id="durationTime">0:00</span>
-						</div>
-
-						<div class="controls-container">
-							<button class="btn" id="prevBtn">
-								<i class="fa-solid fa-backward"></i>
-							</button>
-
-							<button class="btn" id="playBtn">
-								<i class="fa-solid fa-play"></i>
-							</button>
-
-							<button class="btn" id="nextBtn">
-								<i class="fa-solid fa-forward"></i>
-							</button>
-
-							<input
-								type="range"
-								id="volumeSlider"
-								value="100"
-								min="0"
-								max="100"
-							/>
-						</div>
-					</div>
-				</div>
+			<!-- Contenedor principal de Vistas -->
+			<main id="app-main-content">
+				<!-- Vistas cargadas dinámicamente aquí -->
 			</main>
-
-			<!-- Panel lateral -->
-			<aside class="panel-derecho">
-				<div class="opciones-contenedor">
-					<button class="btn-opciones active" id="song-queue">
-						<i class="fa-solid fa-list"></i>
-					</button>
-
-					<button class="btn-opciones" id="btn-lyric">
-						<i class="fa-solid fa-music"></i>
-					</button>
-				</div>
-
-				<div class="panel-content">
-					<section id="playlistView" class="panel-view active"></section>
-
-					<section id="lyricsView" class="panel-view">Esta es la letra</section>
-				</div>
-			</aside>
 		</div>
 
+		<!-- MINI PLAYER BAR -->
+		<div class="mini-player-bar" id="miniPlayerBar">
+			<!-- Barra de progreso miniatura en la parte superior -->
+			<div class="mini-progress-wrapper">
+				<div id="miniProgressBar"></div>
+			</div>
+
+			<div class="mini-player-content">
+				<div class="mini-info" id="miniInfoContainer">
+					<img src="" id="mini-song-image" alt="No cover" />
+					<div class="mini-text">
+						<p id="mini-song-name">Ninguna canción</p>
+					</div>
+				</div>
+				
+				<div class="mini-controls">
+					<button class="btn-mini" id="miniPrevBtn"><i class="fa-solid fa-backward-step"></i></button>
+					<button class="btn-mini" id="miniPlayBtn"><i class="fa-solid fa-play"></i></button>
+					<button class="btn-mini" id="miniNextBtn"><i class="fa-solid fa-forward-step"></i></button>
+				</div>
+
+				<div class="mini-actions">
+					<i class="fa-solid fa-volume-high" style="color: #a0a0a0; font-size: 14px; margin-right: 8px;"></i>
+					<input type="range" id="miniVolumeSlider" class="mini-volume-slider" value="100" min="0" max="100" />
+				</div>
+			</div>
+		</div>
+
+		<!-- OVERLAY DEL REPRODUCTOR COMPLETO -->
+		<div class="full-player-overlay" id="fullPlayerOverlay">
+			<div class="fondo-container fade-in">
+				<div class="filtro"></div>
+			</div>
+
+			<button class="close-overlay-btn" id="closeOverlayBtn"><i class="fa-solid fa-chevron-down"></i></button>
+			
+			<!-- Contenedor general de la aplicación -->
+			<div class="app-container">
+				<!-- Reproductor -->
+				<main class="reproductor-container">
+					<div class="audio-container">
+						<audio id="reproductor" src=""></audio>
+					</div>
+
+					<div class="layout-container">
+						<div class="image-container" id="song-image">
+							<div class="image-swipe">
+								<img src="" alt="Imagen de la canción" />
+							</div>
+						</div>
+
+						<div class="right-panel">
+							<div class="info-container">
+								<p id="song-name" class="swipe-in"></p>
+							</div>
+
+							<div class="progress-container">
+								<span id="currentTime">0:00</span>
+
+								<input
+									type="range"
+									id="progressBar"
+									value="0"
+									step="0.1"
+									min="0"
+								/>
+
+								<span id="durationTime">0:00</span>
+							</div>
+
+							<div class="controls-container">
+								<button class="btn" id="prevBtn">
+									<i class="fa-solid fa-backward"></i>
+								</button>
+
+								<button class="btn" id="playBtn">
+									<i class="fa-solid fa-play"></i>
+								</button>
+
+								<button class="btn" id="nextBtn">
+									<i class="fa-solid fa-forward"></i>
+								</button>
+
+								<input
+									type="range"
+									id="volumeSlider"
+									value="100"
+									min="0"
+									max="100"
+								/>
+							</div>
+						</div>
+					</div>
+				</main>
+
+				<!-- Panel lateral -->
+				<aside class="panel-derecho">
+					<div class="opciones-contenedor">
+						<button class="btn-opciones active" id="song-queue">
+							<i class="fa-solid fa-list"></i>
+						</button>
+
+						<button class="btn-opciones" id="btn-lyric">
+							<i class="fa-solid fa-music"></i>
+						</button>
+					</div>
+
+					<div class="panel-content">
+						<section id="playlistView" class="panel-view active"></section>
+
+						<section id="lyricsView" class="panel-view">Esta es la letra</section>
+					</div>
+				</aside>
+			</div>
+		</div>
+
+		<script src="JS/router.js"></script>
 		<script src="JS/renderer.js"></script>
 	</body>
 </html>

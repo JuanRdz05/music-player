@@ -15,6 +15,19 @@ const progressBar = document.getElementById("progressBar");
 const currentTimeEl = document.getElementById("currentTime");
 const durationTimeEl = document.getElementById("durationTime");
 
+// Mini Reproductor y Overlay
+const miniPlayBtn = document.getElementById("miniPlayBtn");
+const miniPrevBtn = document.getElementById("miniPrevBtn");
+const miniNextBtn = document.getElementById("miniNextBtn");
+const miniSongName = document.getElementById("mini-song-name");
+const miniSongImage = document.getElementById("mini-song-image");
+const miniProgressBar = document.getElementById("miniProgressBar");
+
+const fullPlayerOverlay = document.getElementById("fullPlayerOverlay");
+const expandPlayerBtn = document.getElementById("expandPlayerBtn");
+const closeOverlayBtn = document.getElementById("closeOverlayBtn");
+const miniInfoContainer = document.getElementById("miniInfoContainer");
+
 //Funciones del reproductor
 const {
 	actualizarNombreCancion,
@@ -95,6 +108,11 @@ function actualizarConAnimacion() {
 	setTimeout(() => {
 		actualizarNombreCancion(canciones, indiceCancion, songName);
 		actualizarImagenCancion(canciones, indiceCancion, songImage);
+		
+		// Actualizar Mini Reproductor
+		miniSongName.textContent = canciones[indiceCancion].nombre;
+		miniSongImage.src = canciones[indiceCancion].thumbnail;
+
 		songName.classList.remove("swipe-out");
 		songName.classList.add("swipe-in");
 
@@ -116,8 +134,12 @@ function reproducirCancion(indice) {
 	indiceCancion = indice;
 	reproductor.src = canciones[indiceCancion].archivo;
 	reproductor.currentTime = 0;
-	playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 	reproductor.play();
+	
+	const playIcon = '<i class="fa-solid fa-pause"></i>';
+	playBtn.innerHTML = playIcon;
+	miniPlayBtn.innerHTML = playIcon;
+	
 	marcarTarjetaActiva(canciones[indiceCancion].id);
 
 	// Si el usuario tiene abierta la pestaña de letras, actualízala también
@@ -284,6 +306,9 @@ async function iniciarReproductor() {
 	reproductor.src = canciones[indiceCancion].archivo;
 	actualizarNombreCancion(canciones, indiceCancion, songName);
 	actualizarImagenCancion(canciones, indiceCancion, songImage);
+	
+	miniSongName.textContent = canciones[indiceCancion].nombre;
+	miniSongImage.src = canciones[indiceCancion].thumbnail;
 
 	//Cancion siguiente
 	nextBtn.addEventListener("click", () => {
@@ -324,15 +349,40 @@ async function iniciarReproductor() {
 		reproducirCancion(indiceSeleccionado);
 	});
 
-	playBtn.addEventListener("click", () => {
-		if (reproductor.paused == true) {
+	const togglePlay = () => {
+		if (reproductor.paused) {
 			reproductor.play();
 			playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+			miniPlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 		} else {
 			reproductor.pause();
 			playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+			miniPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
 		}
+	};
+
+	playBtn.addEventListener("click", togglePlay);
+	miniPlayBtn.addEventListener("click", togglePlay);
+
+	miniNextBtn.addEventListener("click", () => nextBtn.click());
+	miniPrevBtn.addEventListener("click", () => prevBtn.click());
+
+	// Overlay toggle
+	const openOverlay = () => fullPlayerOverlay.classList.add("active");
+	const closeOverlay = () => fullPlayerOverlay.classList.remove("active");
+
+	const miniPlayerBar = document.getElementById("miniPlayerBar");
+	
+	// Hacer que todo el mini reproductor abra el grande
+	miniPlayerBar.addEventListener("click", (e) => {
+		// Evitar abrir si se hizo clic en un botón o en el control de volumen
+		if (e.target.closest('.btn-mini') || e.target.closest('#miniVolumeSlider')) {
+			return;
+		}
+		openOverlay();
 	});
+
+	closeOverlayBtn.addEventListener("click", closeOverlay);
 
 	reproductor.addEventListener("loadedmetadata", () => {
 		progressBar.max = reproductor.duration;
@@ -340,38 +390,61 @@ async function iniciarReproductor() {
 		const porcentaje = (progressBar.value / progressBar.max) * 100;
 		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
 		progressBar.style.background = colorFondo;
+		miniProgressBar.style.width = `${porcentaje}%`;
 	});
 
 	reproductor.addEventListener("timeupdate", () => {
 		progressBar.value = reproductor.currentTime;
+		
 		currentTimeEl.textContent = formatTime(reproductor.currentTime);
 		const porcentaje = (progressBar.value / progressBar.max) * 100;
 		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
 		progressBar.style.background = colorFondo;
+		miniProgressBar.style.width = `${porcentaje}%`;
 
 		actualizarLetraSincronizada();
 	});
 
+	const updateProgress = (val) => {
+		reproductor.currentTime = val;
+		const porcentaje = (val / progressBar.max) * 100;
+		progressBar.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
+		miniProgressBar.style.width = `${porcentaje}%`;
+	};
+
 	progressBar.addEventListener("input", () => {
-		reproductor.currentTime = progressBar.value;
-		const porcentaje = (progressBar.value / progressBar.max) * 100;
-		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
-		progressBar.style.background = colorFondo;
+		updateProgress(progressBar.value);
 	});
 
 	reproductor.addEventListener("ended", () => {
-		playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+		const playIcon = '<i class="fa-solid fa-play"></i>';
+		playBtn.innerHTML = playIcon;
+		miniPlayBtn.innerHTML = playIcon;
 		progressBar.value = 0;
+		miniProgressBar.style.width = "0%";
 		currentTimeEl.textContent = "0:00";
 		nextBtn.click();
 	});
 
-	volume.addEventListener("input", () => {
-		reproductor.volume = volume.value / 100;
-		volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
-	});
+	const miniVolume = document.getElementById("miniVolumeSlider");
 
-	volume.style.background = `linear-gradient(to right, var(--rojo-oscuro) ${volume.value}%, #333 ${volume.value}%)`;
+	// Sincronizar sliders de volumen
+	const updateVolume = (val) => {
+		reproductor.volume = val / 100;
+		volume.value = val;
+		if (miniVolume) miniVolume.value = val;
+		
+		const bg = `linear-gradient(to right, var(--rojo-oscuro) ${val}%, #333 ${val}%)`;
+		volume.style.background = bg;
+		if (miniVolume) miniVolume.style.background = bg;
+	};
+
+	volume.addEventListener("input", () => updateVolume(volume.value));
+	if (miniVolume) {
+		miniVolume.addEventListener("input", () => updateVolume(miniVolume.value));
+	}
+
+	updateVolume(volume.value);
 
 	//Pausa al presionar la imagen
 	songImageContainer.addEventListener("click", () => {
@@ -387,14 +460,7 @@ async function iniciarReproductor() {
 			{ once: true },
 		);
 
-		// Play / Pausa
-		if (reproductor.paused) {
-			reproductor.play();
-			playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-		} else {
-			reproductor.pause();
-			playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-		}
+		togglePlay();
 	});
 
 	//Cargar la lista de canciones
@@ -427,13 +493,7 @@ async function iniciarReproductor() {
 	document.addEventListener("keydown", (e) => {
 		if (e.code === "Space") {
 			e.preventDefault();
-			if (reproductor.paused) {
-				reproductor.play();
-				playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-			} else if (reproductor.played) {
-				reproductor.pause();
-				playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-			}
+			togglePlay();
 		}
 	});
 

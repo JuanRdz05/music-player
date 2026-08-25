@@ -14,12 +14,9 @@ body {
 
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
-	min-height: 100vh;
+	height: 100vh;
 	margin: 0;
-
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	overflow: hidden;
 }
 
 .app-container {
@@ -250,11 +247,11 @@ audio {
 }
 
 .fondo-container {
-	position: fixed;
+	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	height: 100%;
 	z-index: -1;
 
 	background-size: cover;
@@ -617,4 +614,240 @@ audio {
 .duration-playlist {
 	font-size: 14px;
 	color: #a0a0a0;
+}
+
+/* ========================================= */
+/* NUEVOS ESTILOS DE LAYOUT Y REPRODUCTOR    */
+/* ========================================= */
+
+.app-layout {
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	height: calc(100vh - 80px); /* Deja 80px para el mini-player abajo */
+	width: 100vw;
+}
+
+/* Sidebar */
+.sidebar {
+	background-color: rgba(11, 11, 11, 0.8);
+	border-right: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 20px 0;
+	display: flex;
+	flex-direction: column;
+	backdrop-filter: blur(10px);
+}
+
+.sidebar-logo {
+	padding: 0 24px;
+	margin-bottom: 20px;
+}
+
+.sidebar-nav {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.sidebar-nav li {
+	margin-bottom: 4px;
+}
+
+.nav-link {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 24px;
+	color: #a0a0a0;
+	text-decoration: none;
+	font-size: 15px;
+	font-weight: 500;
+	transition: all 0.2s;
+}
+
+.nav-link i {
+	font-size: 18px;
+}
+
+.nav-link:hover, .nav-link.active {
+	color: var(--blanco);
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+	border-left: 4px solid var(--rojo);
+}
+
+/* Contenido Principal */
+#app-main-content {
+	overflow-y: auto;
+	padding: 30px;
+	position: relative;
+}
+
+.home-view {
+	animation: fadeIn 0.4s ease;
+}
+
+/* Mini Player Bar */
+.mini-player-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 80px;
+	background-color: var(--negro-mas-oscuro);
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	z-index: 1000;
+	display: flex;
+	flex-direction: column;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.mini-player-bar:hover {
+	background-color: var(--negro-mas-mas-oscuro);
+}
+
+.mini-progress-wrapper {
+	width: 100%;
+	height: 3px;
+	background: #333;
+}
+
+#miniProgressBar {
+	width: 0%;
+	height: 100%;
+	background: var(--rojo);
+	transition: width 0.1s linear;
+}
+
+.mini-player-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 100%;
+	padding: 0 20px;
+}
+
+.mini-info {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	width: 30%;
+	cursor: pointer;
+}
+
+.mini-info img {
+	width: 50px;
+	height: 50px;
+	border-radius: 6px;
+	object-fit: cover;
+}
+
+.mini-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.mini-text p {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.mini-controls {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.btn-mini {
+	background: transparent;
+	border: none;
+	color: var(--blanco);
+	font-size: 18px;
+	cursor: pointer;
+	position: relative;
+	z-index: 10;
+	padding: 8px;
+	border-radius: 50%;
+	transition: transform 0.2s, color 0.2s, background-color 0.2s;
+}
+
+.btn-mini:hover {
+	color: var(--rojo);
+	transform: scale(1.15);
+	background-color: rgba(255, 255, 255, 0.08);
+}
+
+.mini-actions {
+	width: 30%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.mini-volume-slider {
+	width: 80px;
+	appearance: none;
+	-webkit-appearance: none;
+	height: 6px;
+	background: #333;
+	border-radius: 3px;
+	outline: none;
+	cursor: pointer;
+	position: relative;
+	z-index: 10;
+}
+
+.mini-volume-slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: var(--rojo);
+	cursor: pointer;
+	transition: transform 0.1s ease;
+}
+
+.mini-volume-slider::-webkit-slider-thumb:hover {
+	transform: scale(1.2);
+}
+
+/* Full Player Overlay */
+.full-player-overlay {
+	position: fixed;
+	top: 100vh; /* Oculto abajo por defecto */
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--negro);
+	z-index: 2000;
+	transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+}
+
+.full-player-overlay.active {
+	top: 0;
+}
+
+.close-overlay-btn {
+	position: absolute;
+	top: 30px;
+	left: 30px;
+	background: transparent;
+	border: none;
+	color: var(--blanco);
+	font-size: 24px;
+	cursor: pointer;
+	z-index: 2001;
+	transition: color 0.2s;
+}
+
+.close-overlay-btn:hover {
+	color: var(--rojo);
 }

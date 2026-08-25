@@ -1,7 +1,16 @@
-const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
+const {
+	app,
+	BrowserWindow,
+	ipcMain,
+	globalShortcut,
+	dialog,
+} = require("electron");
+
+app.setName("electron-app");
+
 const path = require("path");
-const fs = require("fs");
-const getMP3Duration = require("get-mp3-duration");
+
+const URL = "https://lrclib.net/api/get";
 
 //Generador de miniaturas
 const {
@@ -36,34 +45,11 @@ function createWindow() {
 		app.quit();
 	});
 }
-//Crear un objeto por canción con sus propiedades
+
+//Obtener todas las canciones desde la base de datos
 ipcMain.handle("get-songs", () => {
-	const musicPath = path.join(__dirname, "music");
-	const metadataPath = path.join(__dirname, "metadata", "songs.json");
-
-	const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8"));
-
-	return metadata.map((cancion, index) => {
-		const archivoPath = path.join(musicPath, cancion.archivo);
-
-		const buffer = fs.readFileSync(archivoPath);
-		const duration = getMP3Duration(buffer);
-
-		return {
-			id: index,
-			nombre: cancion.nombre,
-			artista: cancion.artista,
-			album: cancion.album,
-
-			archivo: `music/${cancion.archivo}`,
-
-			imagen: `img/${cancion.archivo.replace(".mp3", ".png")}`,
-
-			thumbnail: `img/thumbnails/${cancion.archivo.replace(".mp3", ".png")}`,
-
-			duration: duration / 1000,
-		};
-	});
+	const { obtenerTodasLasCanciones } = require("./controllers/canciones.js");
+	return obtenerTodasLasCanciones();
 });
 
 ipcMain.handle("get-thumbnail", async (event, imagePath) => {
@@ -75,8 +61,6 @@ ipcMain.handle("get-thumbnail", async (event, imagePath) => {
 		return null;
 	}
 });
-
-const URL = "https://lrclib.net/api/get";
 
 ipcMain.handle(
 	"get-lyrics",
@@ -116,11 +100,29 @@ ipcMain.handle(
 	},
 );
 
-//Cuando la app esté lista
 app.whenReady().then(async () => {
-	console.log("Generando miniaturas...");
-	await generateAllThumbnails();
-	console.log("Miniaturas listas");
+	try {
+		console.log("Generando miniaturas...");
+		await generateAllThumbnails();
+		console.log("Miniaturas listas");
+	} catch (error) {
+		console.error("Error generando miniaturas:", error);
+	}
+
+	try {
+		require("./database/conexion.js");
+		console.log("--Base de datos lista--");
+	} catch (error) {
+		console.error("Error inicializando la base de datos:", error);
+
+		dialog.showErrorBox(
+			"Error al iniciar la base de datos",
+			`No se pudo preparar la base de datos de la aplicación.\n\n${error.message}`,
+		);
+
+		app.quit();
+		return;
+	}
 
 	createWindow();
 });
