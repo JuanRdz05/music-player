@@ -1,0 +1,134 @@
+/* ============================= */
+/* Encabezado del home           */
+/* ============================= */
+
+.home-header {
+	margin-bottom: 30px;
+}
+
+.home-header h1 {
+	margin: 0 0 6px 0;
+	font-size: 28px;
+	font-weight: 700;
+	letter-spacing: 0.3px;
+	color: var(--blanco);
+}
+
+.home-subtitle {
+	margin: 0;
+	font-size: 14px;
+	color: #a0a0a0;
+}
+
+/* ============================= */
+/* Título de sección             */
+/* ============================= */
+
+.section-title {
+	margin: 0 0 16px 0;
+	padding-left: 12px;
+	border-left: 4px solid var(--rojo);
+
+	font-size: 16px;
+	font-weight: 600;
+	letter-spacing: 0.6px;
+	text-transform: uppercase;
+	color: var(--blanco);
+}
+
+/* ============================= */
+/* Listado de canciones del home */
+/* ============================= */
+
+.song-list-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* Sin padding propio: #app-main-content ya da el margen general,
+	   así el título y las tarjetas quedan alineados en el mismo borde */
+}
+
+.card-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	gap: 16px;
+	align-content: start;
+	max-height: 420px;
+	overflow-y: auto;
+	padding-right: 8px;
+}
+
+/* Scrollbar delgado, mismo estilo que el resto de la app */
+.card-container::-webkit-scrollbar {
+	width: 6px;
+}
+
+.card-container::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.card-container::-webkit-scrollbar-thumb {
+	background-color: rgba(230, 57, 70, 0.4);
+	border-radius: 10px;
+}
+
+.card-container::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(230, 57, 70, 0.7);
+}
+
+.song-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-width: 0; /* permite que el texto truncado funcione dentro del grid */
+
+	background-color: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 10px;
+	padding: 12px;
+
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		transform 0.2s ease;
+}
+
+.song-card:hover {
+	background-color: rgba(230, 57, 70, 0.1);
+	border-color: rgba(230, 57, 70, 0.3);
+}
+
+.song-image {
+	width: 80px;
+	height: 80px;
+	border-radius: 8px;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.song-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.song-name {
+	margin: 0 0 4px 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--blanco);
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.song-artist {
+	margin: 0;
+	font-size: 13px;
+	color: #a0a0a0;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

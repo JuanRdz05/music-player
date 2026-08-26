@@ -668,7 +668,8 @@ audio {
 	font-size: 18px;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
 	color: var(--blanco);
 	background-color: rgba(255, 255, 255, 0.05);
 }
@@ -685,7 +686,16 @@ audio {
 }
 
 .home-view {
-	animation: fadeIn 0.4s ease;
+	animation: homeViewFadeIn 0.4s ease;
+}
+
+@keyframes homeViewFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 /* Mini Player Bar */
@@ -771,7 +781,10 @@ audio {
 	z-index: 10;
 	padding: 8px;
 	border-radius: 50%;
-	transition: transform 0.2s, color 0.2s, background-color 0.2s;
+	transition:
+		transform 0.2s,
+		color 0.2s,
+		background-color 0.2s;
 }
 
 .btn-mini:hover {
@@ -850,4 +863,13 @@ audio {
 
 .close-overlay-btn:hover {
 	color: var(--rojo);
+}
+
+/*Listado de las canciones en el home*/
+
+.song-list-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
 }

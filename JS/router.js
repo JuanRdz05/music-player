@@ -13,6 +13,10 @@ async function navigateTo(route) {
 		const html = await response.text();
 		mainContent.innerHTML = html;
 
+		if (route === "home" && typeof window.initHomeView === "function") {
+			window.initHomeView();
+		}
+
 		// Actualizar active classes en el sidebar
 		navLinks.forEach((link) => {
 			link.classList.remove("active");

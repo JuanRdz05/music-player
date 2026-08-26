@@ -108,7 +108,7 @@ function actualizarConAnimacion() {
 	setTimeout(() => {
 		actualizarNombreCancion(canciones, indiceCancion, songName);
 		actualizarImagenCancion(canciones, indiceCancion, songImage);
-		
+
 		// Actualizar Mini Reproductor
 		miniSongName.textContent = canciones[indiceCancion].nombre;
 		miniSongImage.src = canciones[indiceCancion].thumbnail;
@@ -135,11 +135,11 @@ function reproducirCancion(indice) {
 	reproductor.src = canciones[indiceCancion].archivo;
 	reproductor.currentTime = 0;
 	reproductor.play();
-	
+
 	const playIcon = '<i class="fa-solid fa-pause"></i>';
 	playBtn.innerHTML = playIcon;
 	miniPlayBtn.innerHTML = playIcon;
-	
+
 	marcarTarjetaActiva(canciones[indiceCancion].id);
 
 	// Si el usuario tiene abierta la pestaña de letras, actualízala también
@@ -303,10 +303,14 @@ async function mostrarLetraCancionActual() {
 async function iniciarReproductor() {
 	canciones = await cargarCanciones();
 
+	if (typeof window.initHomeView === "function") {
+		window.initHomeView();
+	}
+
 	reproductor.src = canciones[indiceCancion].archivo;
 	actualizarNombreCancion(canciones, indiceCancion, songName);
 	actualizarImagenCancion(canciones, indiceCancion, songImage);
-	
+
 	miniSongName.textContent = canciones[indiceCancion].nombre;
 	miniSongImage.src = canciones[indiceCancion].thumbnail;
 
@@ -371,18 +375,34 @@ async function iniciarReproductor() {
 	const openOverlay = () => fullPlayerOverlay.classList.add("active");
 	const closeOverlay = () => fullPlayerOverlay.classList.remove("active");
 
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "f" || e.key === "F") {
+			openOverlay();
+		}
+	});
+
 	const miniPlayerBar = document.getElementById("miniPlayerBar");
-	
+
 	// Hacer que todo el mini reproductor abra el grande
 	miniPlayerBar.addEventListener("click", (e) => {
 		// Evitar abrir si se hizo clic en un botón o en el control de volumen
-		if (e.target.closest('.btn-mini') || e.target.closest('#miniVolumeSlider')) {
+		if (
+			e.target.closest(".btn-mini") ||
+			e.target.closest("#miniVolumeSlider")
+		) {
 			return;
 		}
 		openOverlay();
 	});
 
 	closeOverlayBtn.addEventListener("click", closeOverlay);
+
+	// Cerrar overlay con la tecla Escape
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape") {
+			closeOverlay();
+		}
+	});
 
 	reproductor.addEventListener("loadedmetadata", () => {
 		progressBar.max = reproductor.duration;
@@ -395,7 +415,7 @@ async function iniciarReproductor() {
 
 	reproductor.addEventListener("timeupdate", () => {
 		progressBar.value = reproductor.currentTime;
-		
+
 		currentTimeEl.textContent = formatTime(reproductor.currentTime);
 		const porcentaje = (progressBar.value / progressBar.max) * 100;
 		const colorFondo = `linear-gradient(to right, var(--rojo-oscuro) ${porcentaje}%, #333 ${porcentaje}%)`;
@@ -433,7 +453,7 @@ async function iniciarReproductor() {
 		reproductor.volume = val / 100;
 		volume.value = val;
 		if (miniVolume) miniVolume.value = val;
-		
+
 		const bg = `linear-gradient(to right, var(--rojo-oscuro) ${val}%, #333 ${val}%)`;
 		volume.style.background = bg;
 		if (miniVolume) miniVolume.style.background = bg;

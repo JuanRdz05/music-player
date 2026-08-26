@@ -10,6 +10,7 @@
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 		/>
+		<link rel="stylesheet" href="CSS/home.css" />
 
 		<title>Reproductor de música</title>
 	</head>
@@ -23,9 +24,16 @@
 					<h2>MusicApp</h2>
 				</div>
 				<ul class="sidebar-nav">
-					<li><a href="#" data-route="home" class="nav-link active"><i class="fa-solid fa-house"></i> Inicio</a></li>
-					<li><a href="#" data-route="explore" class="nav-link"><i class="fa-solid fa-compass"></i> Explorar</a></li>
-					<li><a href="#" data-route="library" class="nav-link"><i class="fa-solid fa-book"></i> Biblioteca</a></li>
+					<li>
+						<a href="#" data-route="home" class="nav-link active"
+							><i class="fa-solid fa-house"></i> Inicio</a
+						>
+					</li>
+					<li>
+						<a href="#" data-route="library" class="nav-link"
+							><i class="fa-solid fa-book"></i> Biblioteca</a
+						>
+					</li>
 				</ul>
 			</nav>
 
@@ -49,16 +57,32 @@
 						<p id="mini-song-name">Ninguna canción</p>
 					</div>
 				</div>
-				
+
 				<div class="mini-controls">
-					<button class="btn-mini" id="miniPrevBtn"><i class="fa-solid fa-backward-step"></i></button>
-					<button class="btn-mini" id="miniPlayBtn"><i class="fa-solid fa-play"></i></button>
-					<button class="btn-mini" id="miniNextBtn"><i class="fa-solid fa-forward-step"></i></button>
+					<button class="btn-mini" id="miniPrevBtn">
+						<i class="fa-solid fa-backward-step"></i>
+					</button>
+					<button class="btn-mini" id="miniPlayBtn">
+						<i class="fa-solid fa-play"></i>
+					</button>
+					<button class="btn-mini" id="miniNextBtn">
+						<i class="fa-solid fa-forward-step"></i>
+					</button>
 				</div>
 
 				<div class="mini-actions">
-					<i class="fa-solid fa-volume-high" style="color: #a0a0a0; font-size: 14px; margin-right: 8px;"></i>
-					<input type="range" id="miniVolumeSlider" class="mini-volume-slider" value="100" min="0" max="100" />
+					<i
+						class="fa-solid fa-volume-high"
+						style="color: #a0a0a0; font-size: 14px; margin-right: 8px"
+					></i>
+					<input
+						type="range"
+						id="miniVolumeSlider"
+						class="mini-volume-slider"
+						value="100"
+						min="0"
+						max="100"
+					/>
 				</div>
 			</div>
 		</div>
@@ -69,8 +93,10 @@
 				<div class="filtro"></div>
 			</div>
 
-			<button class="close-overlay-btn" id="closeOverlayBtn"><i class="fa-solid fa-chevron-down"></i></button>
-			
+			<button class="close-overlay-btn" id="closeOverlayBtn">
+				<i class="fa-solid fa-chevron-down"></i>
+			</button>
+
 			<!-- Contenedor general de la aplicación -->
 			<div class="app-container">
 				<!-- Reproductor -->
@@ -145,13 +171,16 @@
 					<div class="panel-content">
 						<section id="playlistView" class="panel-view active"></section>
 
-						<section id="lyricsView" class="panel-view">Esta es la letra</section>
+						<section id="lyricsView" class="panel-view">
+							Esta es la letra
+						</section>
 					</div>
 				</aside>
 			</div>
 		</div>
 
 		<script src="JS/router.js"></script>
+		<script src="JS/home.js"></script>
 		<script src="JS/renderer.js"></script>
 	</body>
 </html>
