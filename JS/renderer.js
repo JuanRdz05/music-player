@@ -532,13 +532,13 @@ async function iniciarReproductor() {
 
 	//Subir y bajar volumen
 	document.addEventListener("keydown", (e) => {
-		if (e.ctrlKey && e.code === "ArrowUp") {
+		if (e.code === "ArrowUp") {
 			e.preventDefault();
 			volume.value = Number(volume.value) + 10;
 			volume.dispatchEvent(new Event("input"));
 		}
 
-		if (e.ctrlKey && e.code === "ArrowDown") {
+		if (e.code === "ArrowDown") {
 			e.preventDefault();
 			volume.value = Number(volume.value) - 10;
 			volume.dispatchEvent(new Event("input"));

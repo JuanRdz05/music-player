@@ -132,3 +132,36 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+/*Agregar canción button*/
+
+.add-song-btn {
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	padding: 5px 10px;
+	color: var(--blanco);
+	background-color: var(--negro-mas-oscuro);
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease,
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.add-song-btn:hover {
+	background-color: var(--rojo);
+}
+
+.add-song-btn:active {
+	transform: scale(0.98);
+}
+
+.header-container {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: row;
+	gap: 50px;
+	padding-left: 30px;
+}
