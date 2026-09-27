@@ -57,10 +57,6 @@
 	visibility: visible;
 }
 
-/* ============================= */
-/* Tarjeta del modal (dos cols)  */
-/* ============================= */
-
 .add-song-modal {
 	width: min(900px, 92vw);
 	height: 88vh;
@@ -496,7 +492,9 @@
 }
 
 @keyframes spin {
-	to { transform: rotate(360deg); }
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 /* Resultado letra */
