@@ -46,6 +46,28 @@
 						<i class="fa-solid fa-plus"></i> Agregar playlist
 					</button>
 				</div>
+				<div class="section-marker"></div>
+
+				<div class="contenedor-modificadores">
+					<div class="modificar-canciones">
+						<h3>Canciones</h3>
+						<button id="modificar-canciones">
+							<i class="fa-solid fa-pencil"></i>
+						</button>
+						<button id="eliminar-canciones">
+							<i class="fa-solid fa-trash"></i>
+						</button>
+					</div>
+					<div class="modificar-playlists">
+						<h3>Playlists</h3>
+						<button id="modificar-playlists">
+							<i class="fa-solid fa-pencil"></i>
+						</button>
+						<button id="eliminar-playlists">
+							<i class="fa-solid fa-trash"></i>
+						</button>
+					</div>
+				</div>
 			</nav>
 
 			<!-- Contenedor principal de Vistas -->
@@ -406,10 +428,88 @@
 			</div>
 		</div>
 
+		<!-- MODAL PARA ELIMINAR CANCIÓN -->
+		<div class="modal-overlay" id="deleteSongModalOverlay">
+			<div class="add-song-modal add-playlist-modal delete-song-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title">Eliminar canciones</h2>
+						<p class="modal-subtitle">
+							Selecciona las canciones que deseas eliminar
+						</p>
+					</div>
+
+					<button class="modal-close-btn" id="closeDeleteSongModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- Cuerpo de dos columnas -->
+				<div class="modal-body delete-song-modal-body">
+					<!-- Columna izquierda: canciones seleccionadas -->
+					<div class="modal-col delete-selection-panel">
+						<div class="delete-selection-header">
+							<div>
+								<h3 class="lyrics-col-title">Seleccionadas</h3>
+								<span class="delete-selection-count" id="deleteSelectedCount">
+									Ninguna canción seleccionada
+								</span>
+							</div>
+						</div>
+
+						<div class="delete-selected-list" id="deleteSelectedList">
+							<div class="delete-selected-empty">
+								<i class="fa-solid fa-check"></i>
+
+								<p>Selecciona una o más canciones</p>
+
+								<span> Aquí aparecerán las canciones que elijas. </span>
+							</div>
+						</div>
+
+						<button
+							class="btn-save-song delete-confirm-btn"
+							id="confirmDeleteSongsBtn"
+							disabled
+						>
+							<i class="fa-solid fa-trash"></i>
+							Eliminar seleccionadas
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- Columna derecha: canciones disponibles -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Tus canciones</h3>
+
+							<div class="playlist-search-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+
+								<input
+									type="text"
+									id="deleteSongSearch"
+									placeholder="Buscar canción o artista..."
+								/>
+							</div>
+						</div>
+
+						<div class="playlist-song-list" id="deleteSongList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<script src="JS/router.js"></script>
 		<script src="JS/home.js"></script>
 		<script src="JS/library.js"></script>
 		<script src="JS/modal-agregar-cancion.js"></script>
+		<script src="JS/eliminarCancion.js"></script>
 		<script src="JS/playlist.js"></script>
 		<script src="JS/renderer.js"></script>
 	</body>

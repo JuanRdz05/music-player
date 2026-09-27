@@ -2,43 +2,44 @@ const { app } = require("electron");
 const path = require("path");
 const Database = require("better-sqlite3");
 
-// app.setName() NO va aquí: para cuando este archivo se carga (dentro de
-// app.whenReady()), el evento "ready" ya se disparó, y Electron solo
-// permite cambiar el nombre ANTES de ese evento. Por eso setName() se
-// llama al principio de main.js / importarCanciones.js, no en este módulo.
-
 const dbPath = path.join(app.getPath("userData"), "reproductor.db");
 
-// { verbose: console.log } es útil en desarrollo para ver cada SQL ejecutado.
-// Cuando empaquetes la app para distribución, considera quitarlo o
-// condicionarlo (ej. solo si process.env.NODE_ENV === "development").
 const db = new Database(dbPath, { verbose: console.log });
-const querySelect = "SELECT * FROM songs";
-const result = db.prepare("SELECT id, nombre, artista FROM songs").all();
-console.log(result);
 
 // SQLite no valida FOREIGN KEY / ON DELETE CASCADE a menos que lo actives
-// explícitamente por conexión.
 db.pragma("foreign_keys = ON");
 
+// =========================================================================
+// ⚠️ ZONA DE LIMPIEZA (PELIGRO) ⚠️
+// Si quieres borrar todos los datos y reiniciar las tablas desde cero,
+// quita las dos diagonales "//" de las siguientes 3 líneas, ejecuta tu app
+// una vez para que se borre todo, y luego vuelve a comentarlas.
+// =========================================================================
+// db.exec("DROP TABLE IF EXISTS playlist_canciones;");
+// db.exec("DROP TABLE IF EXISTS playlist;");
+// db.exec("DROP TABLE IF EXISTS songs;");
+
+// Creación de tablas con Borrado Lógico
 db.exec(`
 	CREATE TABLE IF NOT EXISTS songs (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	nombre TEXT NOT NULL,
-	artista TEXT NOT NULL,
-	archivo TEXT NOT NULL UNIQUE,
-	imagen TEXT,
-	thumbnail TEXT,
-	duration REAL NOT NULL,
-	es_favorito BOOLEAN DEFAULT 0,
-	lyrics TEXT,
-	lyricsTimed TEXT
-);
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		nombre TEXT NOT NULL,
+		artista TEXT NOT NULL,
+		archivo TEXT NOT NULL UNIQUE,
+		imagen TEXT,
+		thumbnail TEXT,
+		duration REAL NOT NULL,
+		es_favorito BOOLEAN DEFAULT 0,
+		lyrics TEXT,
+		lyricsTimed TEXT,
+		eliminado BOOLEAN DEFAULT 0 -- 1 significa que está "borrada"
+	);
 
 	CREATE TABLE IF NOT EXISTS playlist (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		nombre TEXT NOT NULL,
-		imagen TEXT
+		imagen TEXT,
+		eliminado BOOLEAN DEFAULT 0 -- 1 significa que está "borrada"
 	);
 
 	CREATE TABLE IF NOT EXISTS playlist_canciones (
@@ -52,7 +53,9 @@ db.exec(`
 `);
 
 console.log("Base de datos lista en:", dbPath);
-// const lista = db.prepare(`SELECT id, nombre, artista FROM songs`).all();
-// console.log(lista);
+
+// Moviendo el SELECT aquí abajo aseguramos que las tablas ya existan
+const result = db.prepare("SELECT id, nombre, artista FROM songs").all();
+console.log(result);
 
 module.exports = db;

@@ -9,16 +9,13 @@
 	const LIMITE_CANCIONES_HOME = 6;
 	const LIMITE_PLAYLIST_HOME = 6;
 
-	// Ruta ABSOLUTA a la imagen por defecto: no depende de dónde se inyecte la vista
 	const RUTA_DEFAULT = path.join(__dirname, "img", "default-playlist.png");
 	const IMAGEN_DEFAULT = fs.existsSync(RUTA_DEFAULT)
 		? pathToFileURL(RUTA_DEFAULT).href
-		: ""; // si no existe, dejamos vacío para poder verlo en consola
+		: "";
 
 	function resolverImagenPlaylist(imagen) {
 		if (!imagen) return IMAGEN_DEFAULT;
-
-		// Base64, link web o file:// ya resueltos: directo
 		if (
 			imagen.startsWith("data:image") ||
 			imagen.startsWith("http") ||
@@ -26,10 +23,6 @@
 		) {
 			return imagen;
 		}
-
-		// Rutas relativas tipo "img/playlists/xxx.jpg" (igual que los
-		// thumbnails de las canciones): las resolvemos contra la carpeta
-		// de la app, que es donde __dirname apunta en el renderer
 		const rutaAbsoluta = path.isAbsolute(imagen)
 			? imagen
 			: path.join(__dirname, imagen);

@@ -39,11 +39,12 @@ function crearPlaylist({ nombre, imagen, cancionIds }) {
 function obtenerPlaylists() {
 	return db
 		.prepare(
-			`SELECT p.id, p.nombre, p.imagen, COUNT(pc.cancion_id) AS totalCanciones
-			 FROM playlist p
-			 LEFT JOIN playlist_canciones pc ON pc.playlist_id = p.id
-			 GROUP BY p.id
-			 ORDER BY p.id DESC`,
+			`SELECT p.id, p.nombre, p.imagen, COUNT(s.id) AS totalCanciones
+				FROM playlist p
+				LEFT JOIN playlist_canciones pc ON pc.playlist_id = p.id
+				LEFT JOIN songs s ON s.id = pc.cancion_id AND s.eliminado = 0
+				GROUP BY p.id
+				ORDER BY p.id DESC`,
 		)
 		.all();
 }
@@ -55,10 +56,10 @@ function obtenerCancionesDePlaylist(playlistId) {
 	return db
 		.prepare(
 			`SELECT s.*
-			 FROM playlist_canciones pc
-			 JOIN songs s ON s.id = pc.cancion_id
-			 WHERE pc.playlist_id = ?
-			 ORDER BY pc.id ASC`,
+				FROM playlist_canciones pc
+				JOIN songs s ON s.id = pc.cancion_id
+				WHERE pc.playlist_id = ? AND s.eliminado = 0
+				ORDER BY pc.id ASC`,
 		)
 		.all(playlistId);
 }

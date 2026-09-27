@@ -52,6 +52,21 @@ ipcMain.handle("get-songs", () => {
 	return obtenerTodasLasCanciones();
 });
 
+// ipcMain.handle("get-song", () => {
+// 	return db.prepare("SELECT * FROM songs WHERE eliminado = 0").all();
+// });
+
+ipcMain.handle("delete-songs", (event, ids) => {
+	const { borrarCancionesLogico } = require("./controllers/canciones.js");
+	try {
+		const resultado = borrarCancionesLogico(ids);
+		return { success: true, changes: resultado.changes };
+	} catch (error) {
+		console.error("Error en DB al hacer borrado lógico:", error);
+		return { success: false, error: error.message };
+	}
+});
+
 ipcMain.handle("get-thumbnail", async (event, imagePath) => {
 	try {
 		const thumbPath = await getThumbnailPath(imagePath);
