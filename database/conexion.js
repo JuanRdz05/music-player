@@ -14,7 +14,7 @@ const dbPath = path.join(app.getPath("userData"), "reproductor.db");
 // condicionarlo (ej. solo si process.env.NODE_ENV === "development").
 const db = new Database(dbPath, { verbose: console.log });
 const querySelect = "SELECT * FROM songs";
-const result = db.prepare(querySelect).all();
+const result = db.prepare("SELECT id, nombre, artista FROM songs").all();
 console.log(result);
 
 // SQLite no valida FOREIGN KEY / ON DELETE CASCADE a menos que lo actives
@@ -52,7 +52,7 @@ db.exec(`
 `);
 
 console.log("Base de datos lista en:", dbPath);
-const lista = db.prepare(`SELECT * FROM songs`).all();
-console.log(lista);
+// const lista = db.prepare(`SELECT id, nombre, artista FROM songs`).all();
+// console.log(lista);
 
 module.exports = db;
