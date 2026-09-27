@@ -23,16 +23,17 @@ db.pragma("foreign_keys = ON");
 
 db.exec(`
 	CREATE TABLE IF NOT EXISTS songs (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		nombre TEXT NOT NULL,
-		artista TEXT NOT NULL,
-		album TEXT NOT NULL,
-		archivo TEXT NOT NULL UNIQUE,
-		imagen TEXT,
-		thumbnail TEXT,
-		duration REAL NOT NULL,
-		es_favorito BOOLEAN DEFAULT 0
-	);
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	nombre TEXT NOT NULL,
+	artista TEXT NOT NULL,
+	archivo TEXT NOT NULL UNIQUE,
+	imagen TEXT,
+	thumbnail TEXT,
+	duration REAL NOT NULL,
+	es_favorito BOOLEAN DEFAULT 0,
+	lyrics TEXT,
+	lyricsTimed TEXT
+);
 
 	CREATE TABLE IF NOT EXISTS playlist (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,5 +52,7 @@ db.exec(`
 `);
 
 console.log("Base de datos lista en:", dbPath);
+const lista = db.prepare(`SELECT * FROM songs`).all();
+console.log(lista);
 
 module.exports = db;

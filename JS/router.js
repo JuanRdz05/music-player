@@ -15,6 +15,8 @@ async function navigateTo(route) {
 
 		if (route === "home" && typeof window.initHomeView === "function") {
 			window.initHomeView();
+		} else if (route === "library" && typeof window.initLibraryView === "function") {
+			window.initLibraryView();
 		}
 
 		// Actualizar active classes en el sidebar

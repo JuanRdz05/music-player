@@ -11,6 +11,8 @@
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 		/>
 		<link rel="stylesheet" href="CSS/home.css" />
+		<link rel="stylesheet" href="CSS/modal.css" />
+		<link rel="stylesheet" href="CSS/library.css" />
 
 		<title>Reproductor de música</title>
 	</head>
@@ -35,6 +37,9 @@
 						>
 					</li>
 				</ul>
+				<button class="sidebar-add-btn" id="openAddSongModalBtn">
+					<i class="fa-solid fa-plus"></i> Agregar canción
+				</button>
 			</nav>
 
 			<!-- Contenedor principal de Vistas -->
@@ -179,8 +184,140 @@
 			</div>
 		</div>
 
+		<!-- MODAL PARA AGREGAR CANCIÓN -->
+		<div class="modal-overlay" id="addSongModalOverlay">
+			<div class="add-song-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title">Agregar canción</h2>
+						<p class="modal-subtitle">Completa los datos y busca la letra</p>
+					</div>
+					<button class="modal-close-btn" id="closeAddSongModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- Cuerpo de dos columnas -->
+				<div class="modal-body">
+					<!-- ── Columna izquierda: Formulario ── -->
+					<div class="modal-col modal-col-form">
+						<div class="form-group">
+							<label for="audio-file">
+								<i class="fa-solid fa-file-audio"></i> Archivo de audio
+							</label>
+							<div class="file-drop-zone" id="audioDropZone">
+								<i class="fa-solid fa-music drop-icon"></i>
+								<span class="drop-text" id="audioFileName"
+									>Selecciona un MP3</span
+								>
+								<input type="file" id="audio-file" accept="audio/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="image-file">
+								<i class="fa-solid fa-image"></i> Imagen de portada
+							</label>
+							<div class="file-drop-zone image-drop-zone" id="imageDropZone">
+								<div class="image-preview-wrapper" id="imagePreviewWrapper">
+									<i class="fa-solid fa-image drop-icon"></i>
+									<span class="drop-text" id="imageFileName"
+										>Selecciona una imagen</span
+									>
+								</div>
+								<input type="file" id="image-file" accept="image/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="song-title">
+								<i class="fa-solid fa-pen"></i> Título de la canción
+							</label>
+							<input type="text" id="song-title" placeholder="Ej: Dance!" />
+						</div>
+
+						<div class="form-group">
+							<label for="song-artist">
+								<i class="fa-solid fa-user"></i> Artista
+							</label>
+							<input
+								type="text"
+								id="song-artist"
+								placeholder="Ej: Shihoko Hirata"
+							/>
+						</div>
+
+						<button class="btn-save-song" id="saveSongBtn" disabled>
+							<i class="fa-solid fa-floppy-disk"></i> Guardar canción
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- ── Columna derecha: Preview de letra ── -->
+					<div class="modal-col modal-col-lyrics">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Letra de la canción</h3>
+							<button class="search-lyrics-btn" id="searchLyricsBtn" disabled>
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<span>Buscar letra</span>
+							</button>
+						</div>
+
+						<!-- Estado / contenido de la letra -->
+						<div class="lyrics-preview-area" id="lyricsPreviewArea">
+							<div class="lyrics-placeholder" id="lyricsPlaceholder">
+								<i class="fa-solid fa-music placeholder-icon"></i>
+								<p>
+									Ingresa el título y artista,<br />luego presiona
+									<strong>Buscar letra</strong>
+								</p>
+							</div>
+
+							<!-- Mostrado mientras se busca -->
+							<div class="lyrics-loading hidden" id="lyricsLoading">
+								<div class="spinner"></div>
+								<p>Buscando letra...</p>
+							</div>
+
+							<!-- Resultado con el texto de la letra -->
+							<div class="lyrics-result hidden" id="lyricsResult">
+								<pre class="lyrics-preview-text" id="lyricsPreviewText"></pre>
+							</div>
+
+							<!-- Mensaje si no se encontró -->
+							<div class="lyrics-not-found hidden" id="lyricsNotFound">
+								<i class="fa-solid fa-circle-xmark not-found-icon"></i>
+								<p id="lyricsNotFoundMsg">No se encontró la letra</p>
+							</div>
+						</div>
+
+						<!-- Acciones sobre la letra encontrada -->
+						<div class="lyrics-actions hidden" id="lyricsActions">
+							<div class="lyrics-status-badge" id="lyricsStatusBadge">
+								<i class="fa-solid fa-check-circle"></i>
+								<span id="lyricsStatusText">Letra encontrada</span>
+							</div>
+							<div class="lyrics-action-btns">
+								<button class="btn-lyrics-accept" id="acceptLyricsBtn">
+									<i class="fa-solid fa-check"></i> Guardar letra
+								</button>
+								<button class="btn-lyrics-skip" id="skipLyricsBtn">
+									<i class="fa-solid fa-xmark"></i> Sin letra
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<script src="JS/router.js"></script>
 		<script src="JS/home.js"></script>
+		<script src="JS/library.js"></script>
+		<script src="JS/modal-agregar-cancion.js"></script>
 		<script src="JS/renderer.js"></script>
 	</body>
 </html>

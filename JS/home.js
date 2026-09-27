@@ -5,7 +5,7 @@
 // para no pedir la lista dos veces.
 
 // Cuántas canciones se muestran en el home (el resto vivirá en Biblioteca)
-const LIMITE_CANCIONES_HOME = 8;
+const LIMITE_CANCIONES_HOME = 6;
 
 function crearTarjetaCancionHome(cancion) {
 	const tarjeta = document.createElement("div");

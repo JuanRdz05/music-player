@@ -1,0 +1,141 @@
+/* ============================= */
+/* VISTA DE BIBLIOTECA           */
+/* ============================= */
+
+.library-container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+/* ============================= */
+/* ENCABEZADO Y CONTROLES        */
+/* ============================= */
+
+.library-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 24px;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.library-header h2 {
+	margin: 0;
+	font-size: 28px;
+	font-weight: 700;
+	color: var(--blanco);
+	letter-spacing: 0.3px;
+}
+
+.library-controls {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+/* Buscador */
+.search-box {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.search-box i {
+	position: absolute;
+	left: 12px;
+	color: #a0a0a0;
+	font-size: 14px;
+}
+
+.search-box input {
+	background-color: var(--negro-oscuro);
+	border: 1px solid var(--negro-mas-oscuro);
+	border-radius: 8px;
+	padding: 10px 12px 10px 36px;
+	color: var(--blanco);
+	font-size: 14px;
+	width: 250px;
+	transition: all 0.2s ease;
+	font-family: inherit;
+}
+
+.search-box input:focus {
+	outline: none;
+	background-color: var(--negro-mas-oscuro);
+	border-color: var(--rojo);
+}
+
+.search-box input::placeholder {
+	color: #a0a0a0;
+}
+
+/* Selector de Orden */
+.sort-box {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sort-box label {
+	color: #a0a0a0;
+	font-size: 14px;
+}
+
+.sort-box select {
+	background-color: var(--negro-oscuro);
+	border: 1px solid var(--negro-mas-oscuro);
+	border-radius: 8px;
+	padding: 10px 12px;
+	color: var(--blanco);
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	outline: none;
+	font-family: inherit;
+}
+
+.sort-box select:focus, .sort-box select:hover {
+	background-color: var(--negro-mas-oscuro);
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sort-box select option {
+	background-color: var(--negro-oscuro);
+	color: var(--blanco);
+}
+
+/* ============================= */
+/* GRILLA Y ESTADO VACÍO         */
+/* ============================= */
+
+/* Sobrescribir propiedades de .card-container específicas para biblioteca */
+.library-grid.card-container {
+	max-height: none; 
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+/* Estado cuando no hay canciones */
+.empty-library {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	color: #a0a0a0;
+	grid-column: 1 / -1; /* Ocupa todo el ancho en el grid */
+}
+
+.empty-library i {
+	font-size: 48px;
+	margin-bottom: 16px;
+	opacity: 0.5;
+}
+
+.empty-library p {
+	font-size: 16px;
+	margin: 0;
+}

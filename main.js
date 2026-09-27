@@ -62,43 +62,107 @@ ipcMain.handle("get-thumbnail", async (event, imagePath) => {
 	}
 });
 
+ipcMain.handle("get-lyrics", async (event, { nombre, artista, duration }) => {
+	try {
+		const params = new URLSearchParams({
+			track_name: nombre,
+			artist_name: artista,
+			duration: Math.round(duration),
+		});
+
+		const response = await fetch(`${URL}?${params.toString()}`, {
+			headers: {
+				"User-Agent": "ReproductorMusica/1.0.0",
+			},
+		});
+
+		if (response.status === 404) {
+			return { found: false };
+		}
+		if (!response.ok) {
+			throw new Error(`LRCLIB respondió con estado ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		return {
+			found: true,
+			instrumental: data.instrumental,
+			syncedLyrics: data.syncedLyrics,
+			plainLyrics: data.plainLyrics,
+		};
+	} catch (error) {
+		console.error("Error obteniendo letra desde LRCLIB:", error);
+		return { found: false, error: error.message };
+	}
+});
+
+// Agregar una nueva canción: copia archivos y la inserta en la base de datos
 ipcMain.handle(
-	"get-lyrics",
-	async (event, { nombre, artista, album, duration }) => {
+	"add-song",
+	async (event, { nombre, artista, audioPath, imagePath, duration, lyrics, lyricsTimed }) => {
+		const fs = require("fs");
+		const { agregarCancion } = require("./controllers/canciones.js");
+
 		try {
-			const params = new URLSearchParams({
-				track_name: nombre,
-				artist_name: artista,
-				album_name: album,
-				duration: Math.round(duration),
+			// Carpetas de destino (relativas al directorio de la app)
+			const musicDir = path.join(__dirname, "music");
+			const imgDir = path.join(__dirname, "img");
+
+			if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true });
+			if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
+
+			// Copiar audio
+			const audioExt = path.extname(audioPath);
+			const audioBaseName = `${nombre}${audioExt}`;
+			const audioDest = path.join(musicDir, audioBaseName);
+			fs.copyFileSync(audioPath, audioDest);
+			const archivoRelativo = `music/${audioBaseName}`;
+
+			// Copiar imagen (si se proporcionó)
+			let imagenRelativa = null;
+			let thumbnailRelativa = null;
+
+			if (imagePath) {
+				const imgExt = path.extname(imagePath);
+				const imgBaseName = `${nombre}${imgExt}`;
+				const imgDest = path.join(imgDir, imgBaseName);
+				fs.copyFileSync(imagePath, imgDest);
+				imagenRelativa = `img/${imgBaseName}`;
+
+				// Generar miniatura
+				try {
+					const thumbPath = await getThumbnailPath(imagenRelativa);
+					thumbnailRelativa = thumbPath;
+				} catch (thumbErr) {
+					console.warn("No se pudo generar miniatura:", thumbErr.message);
+					thumbnailRelativa = imagenRelativa;
+				}
+			}
+
+			const resultado = agregarCancion({
+				nombre,
+				artista,
+				archivo: archivoRelativo,
+				imagen: imagenRelativa,
+				thumbnail: thumbnailRelativa,
+				duration,
+				lyrics: lyrics ?? null,
+				lyricsTimed: lyricsTimed ?? null,
 			});
 
-			const response = await fetch(`${URL}?${params.toString()}`, {
-				headers: {
-					"User-Agent": "ReproductorMusica/1.0.0",
-				},
-			});
-
-			if (response.status === 404) {
-				return { found: false };
-			}
-			if (!response.ok) {
-				throw new Error(`LRCLIB respondió con estado ${response.status}`);
+			if (resultado.changes === 0) {
+				return { success: false, error: "La canción ya existe en la biblioteca" };
 			}
 
-			const data = await response.json();
-
-			return {
-				found: true,
-				instrumental: data.instrumental,
-				syncedLyrics: data.syncedLyrics,
-			};
-		} catch (error) {
-			console.error("Error obteniendo letra desde LRCLIB:", error);
-			return { found: false, error: error.message };
+			return { success: true, id: resultado.lastInsertRowid };
+		} catch (err) {
+			console.error("Error al agregar canción:", err);
+			return { success: false, error: err.message };
 		}
 	},
 );
+
 
 app.whenReady().then(async () => {
 	try {

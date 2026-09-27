@@ -511,7 +511,7 @@ async function iniciarReproductor() {
 
 	//Comando pausar y reproducir
 	document.addEventListener("keydown", (e) => {
-		if (e.code === "Space") {
+		if (e.ctrlKey && e.code === "Space") {
 			e.preventDefault();
 			togglePlay();
 		}
@@ -600,3 +600,45 @@ async function iniciarReproductor() {
 }
 
 iniciarReproductor();
+
+/**
+ * Recarga la lista de canciones desde la base de datos y actualiza la UI.
+ * Llamado externamente por modal-agregar-cancion.js tras agregar una nueva canción.
+ */
+window.recargarCanciones = async function () {
+	const nuevasCanciones = await cargarCanciones();
+	canciones = nuevasCanciones;
+
+	// Limpiar y repoblar la playlist
+	playlistView.innerHTML = "";
+	canciones.forEach((cancion) => {
+		const playlistCard = document.createElement("div");
+		playlistCard.classList.add("playlist-card");
+		playlistCard.dataset.id = cancion.id;
+
+		playlistCard.innerHTML = `
+		<div class="image-playlist-song">
+			<img src="${cancion.thumbnail}" alt="PlayList Image" />
+		</div>
+
+		<div class="playlist-text">
+			<p>${cancion.nombre}</p>
+			<label class="duration-playlist" for="durationTime">
+				${formatTime(cancion.duration)}
+			</label>
+		</div>
+	`;
+		playlistView.appendChild(playlistCard);
+	});
+
+	marcarTarjetaActiva(canciones[indiceCancion].id);
+
+	// Actualizar home si está disponible
+	if (typeof window.initHomeView === "function") {
+		window.initHomeView();
+	}
+	// Actualizar library si está disponible
+	if (typeof window.initLibraryView === "function") {
+		window.initLibraryView();
+	}
+};
