@@ -100,7 +100,10 @@ ipcMain.handle("get-lyrics", async (event, { nombre, artista, duration }) => {
 // Agregar una nueva canción: copia archivos y la inserta en la base de datos
 ipcMain.handle(
 	"add-song",
-	async (event, { nombre, artista, audioPath, imagePath, duration, lyrics, lyricsTimed }) => {
+	async (
+		event,
+		{ nombre, artista, audioPath, imagePath, duration, lyrics, lyricsTimed },
+	) => {
 		const fs = require("fs");
 		const { agregarCancion } = require("./controllers/canciones.js");
 
@@ -152,7 +155,10 @@ ipcMain.handle(
 			});
 
 			if (resultado.changes === 0) {
-				return { success: false, error: "La canción ya existe en la biblioteca" };
+				return {
+					success: false,
+					error: "La canción ya existe en la biblioteca",
+				};
 			}
 
 			return { success: true, id: resultado.lastInsertRowid };
@@ -163,6 +169,51 @@ ipcMain.handle(
 	},
 );
 
+// Obtener todas las playlists guardadas (con su portada y total de canciones)
+ipcMain.handle("get-playlists", () => {
+	const { obtenerPlaylists } = require("./controllers/playlists.js");
+	return obtenerPlaylists();
+});
+
+// Obtener las canciones de una playlist específica, en orden
+ipcMain.handle("get-playlist-songs", (event, playlistId) => {
+	const { obtenerCancionesDePlaylist } = require("./controllers/playlists.js");
+	return obtenerCancionesDePlaylist(playlistId);
+});
+
+// Crear una nueva playlist: copia la portada (si hay) y guarda el registro
+ipcMain.handle(
+	"create-playlist",
+	async (event, { nombre, imagePath, cancionIds }) => {
+		const fs = require("fs");
+		const { crearPlaylist } = require("./controllers/playlists.js");
+
+		try {
+			let imagenRelativa = null;
+
+			if (imagePath) {
+				const playlistImgDir = path.join(__dirname, "img", "playlists");
+				if (!fs.existsSync(playlistImgDir)) {
+					fs.mkdirSync(playlistImgDir, { recursive: true });
+				}
+
+				// Prefijo con timestamp: como "playlist.nombre" no es único
+				// en la base de datos, dos playlists con el mismo nombre no
+				// deben pisarse la portada.
+				const imgExt = path.extname(imagePath);
+				const imgBaseName = `${Date.now()}-${nombre}${imgExt}`;
+				const imgDest = path.join(playlistImgDir, imgBaseName);
+				fs.copyFileSync(imagePath, imgDest);
+				imagenRelativa = `img/playlists/${imgBaseName}`;
+			}
+
+			return crearPlaylist({ nombre, imagen: imagenRelativa, cancionIds });
+		} catch (err) {
+			console.error("Error al crear playlist:", err);
+			return { success: false, error: err.message };
+		}
+	},
+);
 
 app.whenReady().then(async () => {
 	try {

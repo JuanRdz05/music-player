@@ -205,3 +205,15 @@
 	flex-direction: column;
 	gap: 12px;
 }
+
+.btn-mostrar-todo {
+	color: #a0a0a0; /* Color grisáceo */
+	text-decoration: none; /* Quita el subrayado */
+	font-size: 14px;
+	font-weight: 600;
+	transition: color 0.2s ease;
+}
+
+.btn-mostrar-todo:hover {
+	color: #ffffff; /* Se ilumina en blanco al pasar el mouse */
+}

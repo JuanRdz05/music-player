@@ -1,0 +1,211 @@
+/* ================================================= */
+/* Modal "Agregar playlist"                           */
+/* Reutiliza .modal-overlay, .add-song-modal, .form-  */
+/* group, .file-drop-zone, .btn-save-song, etc. de    */
+/* modal.css. Aquí solo van los estilos propios de    */
+/* este modal: selector de canciones y ajustes finos. */
+/* ================================================= */
+
+/* La columna izquierda es un poco más angosta que en el
+   modal de canciones: aquí solo hay portada + nombre + botón */
+.add-playlist-modal .modal-col-form {
+	width: 300px;
+}
+
+.playlist-selected-count-group {
+	margin-top: 4px;
+	margin-bottom: 0;
+}
+
+.playlist-selected-count {
+	font-size: 12px;
+	color: #8a8a8a;
+}
+
+/* ── Encabezado de la columna de canciones + buscador ── */
+
+.modal-col-songs .lyrics-col-header {
+	align-items: center;
+}
+
+.playlist-search-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 12px;
+
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.09);
+	border-radius: 8px;
+
+	flex: 1;
+	max-width: 220px;
+	margin-left: 16px;
+
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.playlist-search-wrapper:focus-within {
+	border-color: var(--rojo);
+	background-color: rgba(230, 57, 70, 0.04);
+}
+
+.playlist-search-wrapper i {
+	font-size: 12px;
+	color: #6b6b6b;
+}
+
+.playlist-search-wrapper input {
+	border: none;
+	background: transparent;
+	outline: none;
+	color: var(--blanco);
+	font-size: 13px;
+	font-family: inherit;
+	width: 100%;
+}
+
+.playlist-search-wrapper input::placeholder {
+	color: #5a5a5a;
+}
+
+/* ── Lista de canciones seleccionables ── */
+
+.playlist-song-list {
+	flex: 1;
+	min-height: 120px;
+	overflow-y: auto;
+
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	background: rgba(0, 0, 0, 0.2);
+	padding: 8px;
+
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.playlist-song-list::-webkit-scrollbar {
+	width: 5px;
+}
+.playlist-song-list::-webkit-scrollbar-track {
+	background: transparent;
+}
+.playlist-song-list::-webkit-scrollbar-thumb {
+	background: rgba(230, 57, 70, 0.3);
+	border-radius: 10px;
+}
+
+.playlist-song-list-empty {
+	margin: 0;
+	padding: 30px 10px;
+	text-align: center;
+	font-size: 13px;
+	color: #5a5a5a;
+}
+
+.playlist-song-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 10px;
+
+	border-radius: 8px;
+	border: 1px solid transparent;
+	cursor: pointer;
+
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+.playlist-song-item:hover {
+	background-color: rgba(255, 255, 255, 0.04);
+}
+
+.playlist-song-item.selected {
+	background-color: rgba(230, 57, 70, 0.1);
+	border-color: rgba(230, 57, 70, 0.35);
+}
+
+.playlist-song-thumb {
+	width: 40px;
+	height: 40px;
+	border-radius: 6px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.playlist-song-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.playlist-song-info {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.playlist-song-name {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--blanco);
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.playlist-song-artist {
+	margin: 0;
+	font-size: 12px;
+	color: #7a7a7a;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.playlist-song-duration {
+	font-size: 12px;
+	color: #6b6b6b;
+	flex-shrink: 0;
+}
+
+/* Casilla de selección, mismo lenguaje visual que el resto de botones
+   de acento rojo de la app */
+.playlist-song-check {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+
+	border-radius: 6px;
+	border: 1.5px solid rgba(255, 255, 255, 0.15);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	color: transparent;
+	font-size: 11px;
+
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.playlist-song-item.selected .playlist-song-check {
+	background-color: var(--rojo);
+	border-color: var(--rojo);
+	color: var(--blanco);
+}

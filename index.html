@@ -12,6 +12,7 @@
 		/>
 		<link rel="stylesheet" href="CSS/home.css" />
 		<link rel="stylesheet" href="CSS/modal.css" />
+		<link rel="stylesheet" href="CSS/playlist-modal.css" />
 		<link rel="stylesheet" href="CSS/library.css" />
 
 		<title>Reproductor de música</title>
@@ -313,6 +314,92 @@
 									<i class="fa-solid fa-xmark"></i> Sin letra
 								</button>
 							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- MODAL PARA AGREGAR PLAYLIST -->
+		<div class="modal-overlay" id="addPlaylistModalOverlay">
+			<div class="add-song-modal add-playlist-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title">Agregar playlist</h2>
+						<p class="modal-subtitle">
+							Ponle un nombre, una portada y elige las canciones
+						</p>
+					</div>
+					<button class="modal-close-btn" id="closeAddPlaylistModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- Cuerpo de dos columnas -->
+				<div class="modal-body">
+					<!-- ── Columna izquierda: Formulario ── -->
+					<div class="modal-col modal-col-form">
+						<div class="form-group">
+							<label for="playlist-image">
+								<i class="fa-solid fa-image"></i> Portada de la playlist
+							</label>
+							<div
+								class="file-drop-zone image-drop-zone"
+								id="playlistImageDropZone"
+							>
+								<div
+									class="image-preview-wrapper"
+									id="playlistImagePreviewWrapper"
+								>
+									<i class="fa-solid fa-image drop-icon"></i>
+									<span class="drop-text">Selecciona una imagen</span>
+								</div>
+								<input type="file" id="playlist-image" accept="image/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="playlist-name">
+								<i class="fa-solid fa-pen"></i> Nombre de la playlist
+							</label>
+							<input
+								type="text"
+								id="playlist-name"
+								placeholder="Ej: Para estudiar"
+							/>
+						</div>
+
+						<div class="form-group playlist-selected-count-group">
+							<span class="playlist-selected-count" id="playlistSelectedCount"
+								>Ninguna canción seleccionada</span
+							>
+						</div>
+
+						<button class="btn-save-song" id="savePlaylistBtn" disabled>
+							<i class="fa-solid fa-floppy-disk"></i> Guardar playlist
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- ── Columna derecha: Selección de canciones ── -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Selecciona las canciones</h3>
+							<div class="playlist-search-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<input
+									type="text"
+									id="playlistSongSearch"
+									placeholder="Buscar canción o artista..."
+								/>
+							</div>
+						</div>
+
+						<div class="playlist-song-list" id="playlistSongList">
+							<!-- Canciones renderizadas dinámicamente -->
 						</div>
 					</div>
 				</div>

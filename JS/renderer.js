@@ -1,5 +1,5 @@
 //Llamada a los recursos
-const { ipcRenderer } = require("electron");
+const { ipcRenderer, webUtils } = require("electron");
 
 //Reproductor
 const reproductor = document.querySelector("audio");
@@ -376,7 +376,8 @@ async function iniciarReproductor() {
 	const closeOverlay = () => fullPlayerOverlay.classList.remove("active");
 
 	document.addEventListener("keydown", (e) => {
-		if (e.key === "f" || e.key === "F") {
+		if (e.ctrlKey && (e.key === "f" || e.key === "F")) {
+			e.preventDefault();
 			openOverlay();
 		}
 	});
@@ -641,4 +642,47 @@ window.recargarCanciones = async function () {
 	if (typeof window.initLibraryView === "function") {
 		window.initLibraryView();
 	}
+};
+
+window.cargarYReproducirLista = function (nuevaLista, indiceInicial = 0) {
+	if (!nuevaLista || nuevaLista.length === 0) return;
+
+	// 1. Actualizamos el arreglo global y establecemos el índice correcto
+	canciones = nuevaLista;
+
+	// Validamos que el índice sea válido, de lo contrario empieza en 0
+	if (indiceInicial >= 0 && indiceInicial < canciones.length) {
+		indiceCancion = indiceInicial;
+	} else {
+		indiceCancion = 0;
+	}
+
+	// 2. Limpiar y repoblar la vista de la playlist en el panel derecho
+	const playlistView = document.getElementById("playlistView");
+	if (playlistView) {
+		playlistView.innerHTML = "";
+
+		canciones.forEach((cancion) => {
+			const playlistCard = document.createElement("div");
+			playlistCard.classList.add("playlist-card");
+			playlistCard.dataset.id = cancion.id;
+
+			playlistCard.innerHTML = `
+			<div class="image-playlist-song">
+				<img src="${cancion.thumbnail}" alt="PlayList Image" />
+			</div>
+			<div class="playlist-text">
+				<p>${cancion.nombre}</p>
+				<label class="duration-playlist" for="durationTime">
+					${formatTime(cancion.duration)}
+				</label>
+			</div>
+			`;
+			playlistView.appendChild(playlistCard);
+		});
+	}
+
+	// 3. Ejecutar las animaciones y reproducir la canción seleccionada
+	actualizarConAnimacion();
+	reproducirCancion(indiceCancion);
 };

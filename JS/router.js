@@ -15,7 +15,10 @@ async function navigateTo(route) {
 
 		if (route === "home" && typeof window.initHomeView === "function") {
 			window.initHomeView();
-		} else if (route === "library" && typeof window.initLibraryView === "function") {
+		} else if (
+			route === "library" &&
+			typeof window.initLibraryView === "function"
+		) {
 			window.initLibraryView();
 		}
 
@@ -32,15 +35,16 @@ async function navigateTo(route) {
 	}
 }
 
-// Configurar los event listeners del sidebar
-navLinks.forEach((link) => {
-	link.addEventListener("click", (e) => {
+document.addEventListener("click", (e) => {
+	const link = e.target.closest("[data-route]");
+
+	if (link) {
 		e.preventDefault();
 		const route = link.dataset.route;
 		if (route) {
 			navigateTo(route);
 		}
-	});
+	}
 });
 
 // Cargar la vista inicial por defecto
