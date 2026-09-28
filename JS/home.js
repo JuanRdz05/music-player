@@ -9,10 +9,8 @@
 	const LIMITE_CANCIONES_HOME = 6;
 	const LIMITE_PLAYLIST_HOME = 6;
 
-	const RUTA_DEFAULT = path.join(__dirname, "img", "default-playlist.png");
-	const IMAGEN_DEFAULT = fs.existsSync(RUTA_DEFAULT)
-		? pathToFileURL(RUTA_DEFAULT).href
-		: "";
+	// Imagen fija de la app (assets/ va dentro del paquete, junto a index.html)
+	const IMAGEN_DEFAULT = "assets/default-playlist.png";
 
 	function resolverImagenPlaylist(imagen) {
 		if (!imagen) return IMAGEN_DEFAULT;

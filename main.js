@@ -10,6 +10,9 @@ app.setName("electron-app");
 
 const path = require("path");
 
+// Rutas de datos del usuario (userData). Debe ir DESPUÉS de app.setName.
+const R = require("./utils/rutas");
+
 const URL = "https://lrclib.net/api/get";
 
 //Generador de miniaturas
@@ -49,7 +52,7 @@ function createWindow() {
 //Obtener todas las canciones desde la base de datos
 ipcMain.handle("get-songs", () => {
 	const { obtenerTodasLasCanciones } = require("./controllers/canciones.js");
-	return obtenerTodasLasCanciones();
+	return obtenerTodasLasCanciones().map(R.resolverCancion);
 });
 
 // ipcMain.handle("get-song", () => {
@@ -123,9 +126,9 @@ ipcMain.handle(
 		const { agregarCancion } = require("./controllers/canciones.js");
 
 		try {
-			// Carpetas de destino (relativas al directorio de la app)
-			const musicDir = path.join(__dirname, "music");
-			const imgDir = path.join(__dirname, "img");
+			// Carpetas de destino (dentro de la carpeta de datos del usuario)
+			const musicDir = R.MUSIC_DIR;
+			const imgDir = R.IMG_DIR;
 
 			if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true });
 			if (!fs.existsSync(imgDir)) fs.mkdirSync(imgDir, { recursive: true });
@@ -150,8 +153,8 @@ ipcMain.handle(
 
 				// Generar miniatura
 				try {
-					const thumbPath = await getThumbnailPath(imagenRelativa);
-					thumbnailRelativa = thumbPath;
+					await getThumbnailPath(imgDest); // ruta absoluta
+					thumbnailRelativa = `img/thumbnails/${imgBaseName}`; // relativa, para la BD
 				} catch (thumbErr) {
 					console.warn("No se pudo generar miniatura:", thumbErr.message);
 					thumbnailRelativa = imagenRelativa;
@@ -187,19 +190,19 @@ ipcMain.handle(
 // Obtener todas las playlists guardadas (con su portada y total de canciones)
 ipcMain.handle("get-playlists", () => {
 	const { obtenerPlaylists } = require("./controllers/playlists.js");
-	return obtenerPlaylists();
+	return obtenerPlaylists().map(R.resolverPlaylist);
 });
 
 // Obtener una sola playlist (nombre + imagen), para precargar el modal de edición
 ipcMain.handle("get-playlist", (event, playlistId) => {
 	const { obtenerPlaylistPorId } = require("./controllers/playlists.js");
-	return obtenerPlaylistPorId(playlistId);
+	return R.resolverPlaylist(obtenerPlaylistPorId(playlistId));
 });
 
 // Obtener las canciones de una playlist específica, en orden
 ipcMain.handle("get-playlist-songs", (event, playlistId) => {
 	const { obtenerCancionesDePlaylist } = require("./controllers/playlists.js");
-	return obtenerCancionesDePlaylist(playlistId);
+	return obtenerCancionesDePlaylist(playlistId).map(R.resolverCancion);
 });
 
 // Obtener las canciones que TODAVÍA NO están en una playlist (paso "Agregar canción")
@@ -207,7 +210,7 @@ ipcMain.handle("get-songs-not-in-playlist", (event, playlistId) => {
 	const {
 		obtenerCancionesFueraDePlaylist,
 	} = require("./controllers/playlists.js");
-	return obtenerCancionesFueraDePlaylist(playlistId);
+	return obtenerCancionesFueraDePlaylist(playlistId).map(R.resolverCancion);
 });
 
 // Agregar una canción existente a una playlist existente
@@ -248,7 +251,7 @@ ipcMain.handle(
 			let imagenRelativa = null;
 
 			if (imagePath) {
-				const playlistImgDir = path.join(__dirname, "img", "playlists");
+				const playlistImgDir = R.PLAYLIST_IMG_DIR;
 				if (!fs.existsSync(playlistImgDir)) {
 					fs.mkdirSync(playlistImgDir, { recursive: true });
 				}
@@ -281,7 +284,7 @@ ipcMain.handle("update-playlist", async (event, { id, nombre, imagePath }) => {
 		let imagenRelativa;
 
 		if (imagePath) {
-			const playlistImgDir = path.join(__dirname, "img", "playlists");
+			const playlistImgDir = R.PLAYLIST_IMG_DIR;
 			if (!fs.existsSync(playlistImgDir)) {
 				fs.mkdirSync(playlistImgDir, { recursive: true });
 			}
@@ -316,7 +319,7 @@ ipcMain.handle("delete-playlist", (event, playlistId) => {
 // Obtener las canciones favoritas (más recientes primero)
 ipcMain.handle("get-favorites", () => {
 	const { obtenerFavoritos } = require("./controllers/favoritos.js");
-	return obtenerFavoritos();
+	return obtenerFavoritos().map(R.resolverCancion);
 });
 
 // Obtener solo los ids de las canciones favoritas (para pintar las estrellas)

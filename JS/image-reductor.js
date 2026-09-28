@@ -1,12 +1,13 @@
 const fs = require("fs/promises");
 const path = require("path");
 const sharp = require("sharp");
+const R = require("../utils/rutas");
 
 const CONFIG = {
-	//Carpeta donde estan las imagenes
-	sourceDir: path.join(__dirname, "../img"),
+	//Carpeta donde estan las imagenes (en la carpeta de datos del usuario)
+	sourceDir: R.IMG_DIR,
 	//Carpeta donde se guardaran las imagenes reducidads
-	thumbsDir: path.join(__dirname, "../img", "thumbnails"),
+	thumbsDir: R.THUMBS_DIR,
 	//Tamaño de las imagenes
 	thumbSize: 150,
 	//Extensiones que se procesarán
@@ -31,6 +32,7 @@ async function generateThumbnail(sourcePath, destPath) {
 }
 
 async function generateAllThumbnails() {
+	// recursive: true también crea la carpeta "img" si todavía no existe
 	await fs.mkdir(CONFIG.thumbsDir, { recursive: true });
 
 	const entries = await fs.readdir(CONFIG.sourceDir, { withFileTypes: true });
@@ -76,10 +78,3 @@ async function getThumbnailPath(originalImagePath) {
 }
 
 module.exports = { generateAllThumbnails, getThumbnailPath, CONFIG };
-
-if (require.main === module) {
-	generateAllThumbnails().catch((err) => {
-		console.error("Error generando thumbnails:", err);
-		process.exit(1);
-	});
-}

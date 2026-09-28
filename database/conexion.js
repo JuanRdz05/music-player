@@ -10,7 +10,6 @@ const db = new Database(dbPath, { verbose: console.log });
 db.pragma("foreign_keys = ON");
 
 // =========================================================================
-// ⚠️ ZONA DE LIMPIEZA (PELIGRO) ⚠️
 // Si quieres borrar todos los datos y reiniciar las tablas desde cero,
 // quita las dos diagonales "//" de las siguientes 3 líneas, ejecuta tu app
 // una vez para que se borre todo, y luego vuelve a comentarlas.
