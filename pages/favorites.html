@@ -1,0 +1,34 @@
+<div class="library-container favorites-container">
+	<div class="library-header">
+		<div class="favorites-title-group">
+			<h2>
+				<i class="fa-solid fa-star favorites-title-icon"></i>
+				Favoritos
+			</h2>
+			<span class="favorites-count" id="favoritesCount" hidden></span>
+		</div>
+
+		<div class="library-controls">
+			<div class="search-box">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<input
+					type="text"
+					id="favoritesSearchInput"
+					placeholder="Buscar en favoritos..."
+				/>
+			</div>
+			<div class="sort-box">
+				<label for="favoritesSortSelect">Ordenar por:</label>
+				<select id="favoritesSortSelect">
+					<option value="id_asc">Orden de agregación</option>
+					<option value="name_asc">Título (A - Z)</option>
+					<option value="name_desc">Título (Z - A)</option>
+					<option value="artist_asc">Artista (A - Z)</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<!-- Grilla de canciones favoritas (JS/favorites.js) -->
+	<div class="library-grid card-container" id="favoritesGrid"></div>
+</div>

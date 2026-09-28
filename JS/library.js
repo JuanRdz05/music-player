@@ -1,116 +1,119 @@
 // JS/library.js
 // Lógica para la vista de "Biblioteca".
-// Reutiliza el arreglo global "canciones" que carga renderer.js.
+// Ahora pide las canciones directamente a la base de datos (antes usaba el
+// arreglo global "canciones", que cambia cuando se reproduce una playlist o
+// los favoritos y hacía que la biblioteca mostrara solo esa cola).
+(function () {
+	const { ipcRenderer } = require("electron");
 
-function renderLibraryCards(cancionesAMostrar) {
-	const contenedor = document.getElementById("libraryGrid");
+	let todas = []; // todas las canciones de la biblioteca
+	let visibles = []; // las que se ven ahora (filtradas + ordenadas) = cola
 
-	// Si no estamos en la vista de biblioteca, no hacemos nada
-	if (!contenedor) return;
+	function renderLibraryCards(lista, animar) {
+		const contenedor = document.getElementById("libraryGrid");
+		if (!contenedor) return;
 
-	contenedor.innerHTML = "";
+		// Sin animación de entrada al buscar/ordenar (solo al abrir la vista)
+		contenedor.classList.toggle("no-anim", !animar);
+		contenedor.innerHTML = "";
 
-	if (!cancionesAMostrar || cancionesAMostrar.length === 0) {
-		contenedor.innerHTML = `<div class="empty-library">
-            <i class="fa-solid fa-music"></i>
-            <p>No se encontraron canciones.</p>
-        </div>`;
-		return;
-	}
-
-	cancionesAMostrar.forEach((cancion) => {
-		const tarjeta = document.createElement("div");
-		tarjeta.classList.add("song-card");
-		tarjeta.dataset.id = cancion.id;
-
-		tarjeta.innerHTML = `
-            <img class="song-image" src="${cancion.thumbnail}" alt="${cancion.nombre}" />
-            <div class="song-info">
-                <h3 class="song-name">${cancion.nombre}</h3>
-                <p class="song-artist">${cancion.artista}</p>
-            </div>
-        `;
-		contenedor.appendChild(tarjeta);
-	});
-}
-
-function initLibraryView() {
-	const searchInput = document.getElementById("librarySearchInput");
-	const sortSelect = document.getElementById("librarySortSelect");
-	const grid = document.getElementById("libraryGrid");
-
-	if (!grid) return;
-	// Si las canciones aún no han sido cargadas por renderer.js, salir.
-	// Cuando se carguen, renderer.js llamará a esta función nuevamente.
-	if (typeof canciones === "undefined") return;
-
-	// Función para aplicar filtros de búsqueda y orden
-	function updateLibrary() {
-		let filteredSongs = [...canciones];
-
-		// 1. Filtrar por búsqueda
-		if (searchInput) {
-			const query = searchInput.value.toLowerCase().trim();
-			if (query) {
-				filteredSongs = filteredSongs.filter(
-					(c) =>
-						c.nombre.toLowerCase().includes(query) ||
-						c.artista.toLowerCase().includes(query)
-				);
-			}
+		if (!lista || lista.length === 0) {
+			const mensaje =
+				todas.length === 0
+					? "Tu biblioteca está vacía."
+					: "No se encontraron canciones.";
+			contenedor.innerHTML = `<div class="empty-library">
+				<i class="fa-solid fa-music"></i>
+				<p>${mensaje}</p>
+			</div>`;
+			return;
 		}
 
-		// 2. Ordenar
-		if (sortSelect) {
-			const sortValue = sortSelect.value;
-			filteredSongs.sort((a, b) => {
-				if (sortValue === "name_asc") {
-					return a.nombre.localeCompare(b.nombre);
-				} else if (sortValue === "name_desc") {
-					return b.nombre.localeCompare(a.nombre);
-				} else if (sortValue === "artist_asc") {
-					return a.artista.localeCompare(b.artista);
-				} else {
+		lista.forEach((cancion, i) => {
+			contenedor.appendChild(window.crearTarjetaCancion(cancion, i));
+		});
+	}
+
+	async function initLibraryView() {
+		const searchInput = document.getElementById("librarySearchInput");
+		const sortSelect = document.getElementById("librarySortSelect");
+		const grid = document.getElementById("libraryGrid");
+
+		if (!grid) return;
+
+		try {
+			// Los ids favoritos deben estar listos para pintar las estrellas
+			if (typeof window.cargarFavoritosIds === "function") {
+				await window.cargarFavoritosIds();
+			}
+			todas = (await ipcRenderer.invoke("get-songs")) || [];
+		} catch (error) {
+			console.error("Error al cargar la biblioteca:", error);
+			todas = [];
+		}
+
+		// Si el usuario cambió de vista mientras cargaba, no hacemos nada
+		if (!grid.isConnected) return;
+
+		function updateLibrary(animar = false) {
+			let filtradas = [...todas];
+
+			// 1. Filtrar por búsqueda
+			if (searchInput) {
+				const query = searchInput.value.toLowerCase().trim();
+				if (query) {
+					filtradas = filtradas.filter(
+						(c) =>
+							(c.nombre || "").toLowerCase().includes(query) ||
+							(c.artista || "").toLowerCase().includes(query),
+					);
+				}
+			}
+
+			// 2. Ordenar
+			if (sortSelect) {
+				const sortValue = sortSelect.value;
+				filtradas.sort((a, b) => {
+					if (sortValue === "name_asc") {
+						return (a.nombre || "").localeCompare(b.nombre || "");
+					} else if (sortValue === "name_desc") {
+						return (b.nombre || "").localeCompare(a.nombre || "");
+					} else if (sortValue === "artist_asc") {
+						return (a.artista || "").localeCompare(b.artista || "");
+					}
 					// Predeterminado por ID (orden de subida)
 					return a.id - b.id;
-				}
-			});
+				});
+			}
+
+			visibles = filtradas;
+
+			// 3. Renderizar las tarjetas
+			renderLibraryCards(visibles, animar);
 		}
 
-		// 3. Renderizar las tarjetas
-		renderLibraryCards(filteredSongs);
+		// oninput / onchange / onclick reemplazan el handler en cada llamada
+		// (initLibraryView también se llama al recargar canciones)
+		if (searchInput) searchInput.oninput = () => updateLibrary(false);
+		if (sortSelect) sortSelect.onchange = () => updateLibrary(false);
+
+		updateLibrary(true);
+
+		// Al tocar una tarjeta, la cola pasa a ser la lista que se está viendo
+		grid.onclick = (e) => {
+			const tarjeta = e.target.closest(".song-card");
+			if (!tarjeta) return;
+
+			const id = Number(tarjeta.dataset.id);
+			const indice = visibles.findIndex((c) => c.id === id);
+			if (indice === -1) return;
+
+			if (typeof window.cargarYReproducirLista === "function") {
+				window.cargarYReproducirLista(visibles, indice);
+			}
+		};
 	}
 
-	// Agregar eventos para que se actualice al buscar o cambiar el orden
-	if (searchInput) searchInput.addEventListener("input", updateLibrary);
-	if (sortSelect) sortSelect.addEventListener("change", updateLibrary);
-
-	// Renderizar la primera vez que se carga la vista
-	updateLibrary();
-
-	// Delegación de eventos para reproducir canción al dar clic en una tarjeta
-	grid.addEventListener("click", (e) => {
-		const tarjeta = e.target.closest(".song-card");
-		if (!tarjeta) return;
-
-		const id = Number(tarjeta.dataset.id);
-		const indiceSeleccionado = canciones.findIndex((c) => c.id === id);
-		if (indiceSeleccionado === -1) return;
-
-		if (
-			typeof indiceCancion !== "undefined" &&
-			indiceSeleccionado !== indiceCancion
-		) {
-			if (typeof actualizarConAnimacion === "function") {
-				actualizarConAnimacion();
-			}
-		}
-		
-		if (typeof reproducirCancion === "function") {
-			reproducirCancion(indiceSeleccionado);
-		}
-	});
-}
-
-// Exponer la función globalmente para que router.js y renderer.js puedan llamarla
-window.initLibraryView = initLibraryView;
+	// Exponer la función globalmente para que router.js y renderer.js puedan llamarla
+	window.initLibraryView = initLibraryView;
+})();

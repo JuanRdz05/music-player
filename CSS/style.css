@@ -873,3 +873,43 @@ audio {
 	gap: 20px;
 	padding: 20px;
 }
+#shuffleBtn {
+	position: relative;
+}
+
+/* Activado: mismo botón oscuro, pero con icono rojo y borde suave */
+#shuffleBtn.activo {
+	color: var(--rojo);
+	border-color: rgba(230, 57, 70, 0.5);
+	background-color: rgba(230, 57, 70, 0.1);
+}
+
+/* Puntito indicador debajo del icono */
+#shuffleBtn.activo::after,
+#miniShuffleBtn.activo::after {
+	content: "";
+	position: absolute;
+	bottom: 3px;
+	left: 50%;
+	width: 4px;
+	height: 4px;
+	margin-left: -2px;
+	border-radius: 50%;
+	background-color: var(--rojo);
+}
+
+/* Al pasar el mouse se comporta como los demás botones */
+#shuffleBtn.activo:hover {
+	color: #ffffff;
+	border-color: var(--rojo);
+	background-color: var(--rojo);
+}
+
+#shuffleBtn.activo:hover::after {
+	background-color: #ffffff;
+}
+
+/* Mini reproductor: icono rojo + puntito */
+#miniShuffleBtn.activo {
+	color: var(--rojo);
+}

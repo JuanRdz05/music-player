@@ -22,6 +22,7 @@ const miniNextBtn = document.getElementById("miniNextBtn");
 const miniSongName = document.getElementById("mini-song-name");
 const miniSongImage = document.getElementById("mini-song-image");
 const miniProgressBar = document.getElementById("miniProgressBar");
+const miniPlayerBar = document.getElementById("miniPlayerBar");
 
 const fullPlayerOverlay = document.getElementById("fullPlayerOverlay");
 const expandPlayerBtn = document.getElementById("expandPlayerBtn");
@@ -52,8 +53,13 @@ const lyricsBtn = document.getElementById("btn-lyric");
 const playlistView = document.getElementById("playlistView");
 const lyricsView = document.getElementById("lyricsView");
 
-let canciones = [];
+let canciones = []; // cola actual (mezclada si el modo aleatorio está activo)
 let indiceCancion = 0;
+
+// Modo aleatorio: "colaOriginal" guarda el orden SIN mezclar de la lista que
+// se está escuchando, para poder volver a él al desactivar el modo.
+let colaOriginal = [];
+let modoAleatorio = false;
 
 // Estado de la letra sincronizada actualmente mostrada
 let lineasSincronizadas = []; // [{ time: segundos, text: "..." }, ...]
@@ -93,6 +99,9 @@ function parseLRC(textoLRC) {
 }
 
 function actualizarConAnimacion() {
+	// Si no hay ninguna canción cargada (biblioteca vacía) no hay nada que animar
+	if (!canciones[indiceCancion]) return;
+
 	//Animación del titulo de la canción
 	songName.classList.remove("swipe-in");
 	songName.classList.add("swipe-out");
@@ -131,6 +140,12 @@ async function cargarCanciones() {
 }
 
 function reproducirCancion(indice) {
+	// Nada que reproducir: no hay canciones en la biblioteca/lista actual
+	if (!canciones || canciones.length === 0) {
+		vaciarReproductor();
+		return;
+	}
+
 	indiceCancion = indice;
 	reproductor.src = canciones[indiceCancion].archivo;
 	reproductor.currentTime = 0;
@@ -140,6 +155,7 @@ function reproducirCancion(indice) {
 	playBtn.innerHTML = playIcon;
 	miniPlayBtn.innerHTML = playIcon;
 
+	mostrarMiniPlayer();
 	marcarTarjetaActiva(canciones[indiceCancion].id);
 
 	// Si el usuario tiene abierta la pestaña de letras, actualízala también
@@ -157,6 +173,45 @@ function marcarTarjetaActiva(id) {
 			Number(tarjeta.dataset.id) === Number(id),
 		);
 	});
+}
+
+// Muestra / oculta el mini reproductor de abajo. Se usa cuando no hay
+// ninguna canción disponible (biblioteca vacía o se eliminó la canción
+// que estaba sonando y no quedó nada que reproducir).
+function mostrarMiniPlayer() {
+	miniPlayerBar.classList.remove("hidden");
+}
+
+function ocultarMiniPlayer() {
+	miniPlayerBar.classList.add("hidden");
+	// Si el reproductor grande estaba abierto, no tiene sentido dejarlo
+	// abierto mostrando una canción que ya no existe.
+	fullPlayerOverlay.classList.remove("active");
+}
+
+// Detiene la reproducción y deja al reproductor en un estado "vacío":
+// sin audio cargado, sin texto/imagen de canción, y con el mini
+// reproductor oculto. Se usa cuando ya no queda ninguna canción en la
+// biblioteca.
+function vaciarReproductor() {
+	reproductor.pause();
+	reproductor.removeAttribute("src");
+
+	playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+	miniPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+
+	progressBar.value = 0;
+	progressBar.style.background = "";
+	miniProgressBar.style.width = "0%";
+	currentTimeEl.textContent = "0:00";
+	durationTimeEl.textContent = "0:00";
+
+	songName.textContent = "";
+	songImage.src = "";
+	miniSongName.textContent = "Ninguna canción";
+	miniSongImage.src = "";
+
+	ocultarMiniPlayer();
 }
 
 // Caché en memoria: evita pedir la misma letra dos veces mientras
@@ -302,20 +357,29 @@ async function mostrarLetraCancionActual() {
 
 async function iniciarReproductor() {
 	canciones = await cargarCanciones();
+	colaOriginal = canciones;
 
 	if (typeof window.initHomeView === "function") {
 		window.initHomeView();
 	}
 
-	reproductor.src = canciones[indiceCancion].archivo;
-	actualizarNombreCancion(canciones, indiceCancion, songName);
-	actualizarImagenCancion(canciones, indiceCancion, songImage);
+	if (canciones.length === 0) {
+		// Biblioteca vacía: no hay nada que cargar en el reproductor
+		vaciarReproductor();
+	} else {
+		reproductor.src = canciones[indiceCancion].archivo;
+		actualizarNombreCancion(canciones, indiceCancion, songName);
+		actualizarImagenCancion(canciones, indiceCancion, songImage);
 
-	miniSongName.textContent = canciones[indiceCancion].nombre;
-	miniSongImage.src = canciones[indiceCancion].thumbnail;
+		miniSongName.textContent = canciones[indiceCancion].nombre;
+		miniSongImage.src = canciones[indiceCancion].thumbnail;
+
+		mostrarMiniPlayer();
+	}
 
 	//Cancion siguiente
 	nextBtn.addEventListener("click", () => {
+		if (canciones.length === 0) return;
 		let nuevoIndice = indiceCancion + 1;
 		//Si el indice de la cancion es mayor que el tamño del arreglo, entonces volvemos al inicio
 		if (nuevoIndice > canciones.length - 1) {
@@ -327,6 +391,7 @@ async function iniciarReproductor() {
 
 	//Cancion anterior
 	prevBtn.addEventListener("click", () => {
+		if (canciones.length === 0) return;
 		let nuevoIndice = indiceCancion;
 		if (progressBar.value <= 3) {
 			nuevoIndice = indiceCancion - 1;
@@ -381,8 +446,6 @@ async function iniciarReproductor() {
 			openOverlay();
 		}
 	});
-
-	const miniPlayerBar = document.getElementById("miniPlayerBar");
 
 	// Hacer que todo el mini reproductor abra el grande
 	miniPlayerBar.addEventListener("click", (e) => {
@@ -507,8 +570,10 @@ async function iniciarReproductor() {
 		playlistView.appendChild(playlistCard);
 	});
 
-	// Marca la canción inicial como activa en la playlist
-	marcarTarjetaActiva(canciones[indiceCancion].id);
+	// Marca la canción inicial como activa en la playlist (si hay alguna)
+	if (canciones.length > 0) {
+		marcarTarjetaActiva(canciones[indiceCancion].id);
+	}
 
 	//Comando pausar y reproducir
 	document.addEventListener("keydown", (e) => {
@@ -607,8 +672,17 @@ iniciarReproductor();
  * Llamado externamente por modal-agregar-cancion.js tras agregar una nueva canción.
  */
 window.recargarCanciones = async function () {
+	// Guardamos el id de la canción que estaba sonando/seleccionada ANTES
+	// de recargar, para saber después si sigue existiendo o fue eliminada.
+	const idCancionActual = canciones[indiceCancion]
+		? canciones[indiceCancion].id
+		: null;
+
 	const nuevasCanciones = await cargarCanciones();
-	canciones = nuevasCanciones;
+	colaOriginal = nuevasCanciones;
+	canciones = modoAleatorio
+		? mezclarLista(nuevasCanciones, idCancionActual)
+		: nuevasCanciones;
 
 	// Limpiar y repoblar la playlist
 	playlistView.innerHTML = "";
@@ -632,7 +706,44 @@ window.recargarCanciones = async function () {
 		playlistView.appendChild(playlistCard);
 	});
 
-	marcarTarjetaActiva(canciones[indiceCancion].id);
+	if (canciones.length === 0) {
+		// Ya no queda ninguna canción en la biblioteca
+		indiceCancion = 0;
+		vaciarReproductor();
+	} else {
+		const nuevoIndice = canciones.findIndex((c) => c.id === idCancionActual);
+
+		if (nuevoIndice === -1) {
+			// La canción que estaba sonando ya no existe (fue eliminada):
+			// paramos la reproducción y dejamos el reproductor listo en la
+			// primera canción disponible, pero sin reproducirla sola.
+			indiceCancion = 0;
+			reproductor.pause();
+			reproductor.src = canciones[indiceCancion].archivo;
+			reproductor.currentTime = 0;
+
+			actualizarNombreCancion(canciones, indiceCancion, songName);
+			actualizarImagenCancion(canciones, indiceCancion, songImage);
+			miniSongName.textContent = canciones[indiceCancion].nombre;
+			miniSongImage.src = canciones[indiceCancion].thumbnail;
+
+			playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+			miniPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+			progressBar.value = 0;
+			miniProgressBar.style.width = "0%";
+			currentTimeEl.textContent = "0:00";
+
+			mostrarMiniPlayer();
+		} else {
+			// La canción sigue existiendo: solo actualizamos el índice por si
+			// cambió de posición en la lista. No tocamos el <audio>, así que
+			// la reproducción (si estaba sonando) no se interrumpe.
+			indiceCancion = nuevoIndice;
+			mostrarMiniPlayer();
+		}
+
+		marcarTarjetaActiva(canciones[indiceCancion].id);
+	}
 
 	// Actualizar home si está disponible
 	if (typeof window.initHomeView === "function") {
@@ -644,17 +755,121 @@ window.recargarCanciones = async function () {
 	}
 };
 
-window.cargarYReproducirLista = function (nuevaLista, indiceInicial = 0) {
+// ============================================================
+// MODO ALEATORIO
+// ============================================================
+
+const shuffleBtn = document.getElementById("shuffleBtn");
+const miniShuffleBtn = document.getElementById("miniShuffleBtn");
+
+// Fisher-Yates sobre una COPIA (no toca la lista original).
+// Si se pasa "idPrimero", esa canción queda al inicio de la cola: así, al
+// elegir una canción concreta, suena esa y el resto va en orden aleatorio.
+function mezclarLista(lista, idPrimero = null) {
+	const copia = [...lista];
+
+	for (let i = copia.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[copia[i], copia[j]] = [copia[j], copia[i]];
+	}
+
+	if (idPrimero !== null) {
+		const pos = copia.findIndex((c) => c.id === idPrimero);
+		if (pos > 0) copia.unshift(copia.splice(pos, 1)[0]);
+	}
+
+	return copia;
+}
+
+// Vuelve a dibujar el panel de cola con el orden actual de "canciones".
+function renderizarCola() {
+	playlistView.innerHTML = "";
+
+	canciones.forEach((cancion) => {
+		const playlistCard = document.createElement("div");
+		playlistCard.classList.add("playlist-card");
+		playlistCard.dataset.id = cancion.id;
+
+		playlistCard.innerHTML = `
+		<div class="image-playlist-song">
+			<img src="${cancion.thumbnail}" alt="PlayList Image" />
+		</div>
+		<div class="playlist-text">
+			<p>${cancion.nombre}</p>
+			<label class="duration-playlist" for="durationTime">
+				${formatTime(cancion.duration)}
+			</label>
+		</div>
+		`;
+		playlistView.appendChild(playlistCard);
+	});
+}
+
+function actualizarBotonesAleatorio() {
+	[shuffleBtn, miniShuffleBtn].forEach((btn) => {
+		if (!btn) return;
+		btn.classList.toggle("activo", modoAleatorio);
+		btn.title = modoAleatorio
+			? "Desactivar modo aleatorio"
+			: "Activar modo aleatorio";
+	});
+}
+
+// Activa/desactiva el modo aleatorio SIN interrumpir la canción que suena:
+// solo cambia el orden de la cola que viene después.
+function alternarAleatorio() {
+	modoAleatorio = !modoAleatorio;
+
+	const actual = canciones[indiceCancion];
+
+	if (actual) {
+		if (modoAleatorio) {
+			// La canción actual pasa a ser la primera; el resto se mezcla
+			canciones = mezclarLista(colaOriginal, actual.id);
+			indiceCancion = 0;
+		} else {
+			// Volvemos al orden original y buscamos dónde quedó la actual
+			canciones = [...colaOriginal];
+			indiceCancion = Math.max(
+				0,
+				canciones.findIndex((c) => c.id === actual.id),
+			);
+		}
+
+		renderizarCola();
+		marcarTarjetaActiva(actual.id);
+	}
+
+	actualizarBotonesAleatorio();
+}
+
+if (shuffleBtn) shuffleBtn.addEventListener("click", alternarAleatorio);
+if (miniShuffleBtn) miniShuffleBtn.addEventListener("click", alternarAleatorio);
+actualizarBotonesAleatorio();
+
+// "indiceInicial" = canción que el usuario tocó. Si no se indica (p. ej. al
+// tocar una playlist completa), la lista empieza desde el principio, o desde
+// una canción al azar si el modo aleatorio está activo.
+window.cargarYReproducirLista = function (nuevaLista, indiceInicial = null) {
 	if (!nuevaLista || nuevaLista.length === 0) return;
 
-	// 1. Actualizamos el arreglo global y establecemos el índice correcto
-	canciones = nuevaLista;
+	// Guardamos el orden original para poder volver a él al apagar el modo
+	colaOriginal = nuevaLista;
 
-	// Validamos que el índice sea válido, de lo contrario empieza en 0
-	if (indiceInicial >= 0 && indiceInicial < canciones.length) {
-		indiceCancion = indiceInicial;
-	} else {
+	const indiceValido =
+		indiceInicial !== null &&
+		indiceInicial >= 0 &&
+		indiceInicial < nuevaLista.length;
+
+	// 1. Actualizamos el arreglo global y establecemos el índice correcto
+	if (modoAleatorio) {
+		// La canción elegida va primero; las que siguen cambian cada vez
+		const idElegida = indiceValido ? nuevaLista[indiceInicial].id : null;
+		canciones = mezclarLista(nuevaLista, idElegida);
 		indiceCancion = 0;
+	} else {
+		canciones = nuevaLista;
+		indiceCancion = indiceValido ? indiceInicial : 0;
 	}
 
 	// 2. Limpiar y repoblar la vista de la playlist en el panel derecho

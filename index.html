@@ -14,6 +14,8 @@
 		<link rel="stylesheet" href="CSS/modal.css" />
 		<link rel="stylesheet" href="CSS/playlist-modal.css" />
 		<link rel="stylesheet" href="CSS/library.css" />
+		<link rel="stylesheet" href="CSS/favorites.css" />
+		<link rel="stylesheet" href="CSS/dialogo.css" />
 
 		<title>Reproductor de música</title>
 	</head>
@@ -37,6 +39,11 @@
 							><i class="fa-solid fa-book"></i> Biblioteca</a
 						>
 					</li>
+					<li>
+						<a href="#" data-route="favorites" class="nav-link"
+							><i class="fa-solid fa-star"></i> Favoritos</a
+						>
+					</li>
 				</ul>
 				<div class="sidebar-buttons">
 					<button class="sidebar-add-btn" id="openAddSongModalBtn">
@@ -51,19 +58,7 @@
 				<div class="contenedor-modificadores">
 					<div class="modificar-canciones">
 						<h3>Canciones</h3>
-						<button id="modificar-canciones">
-							<i class="fa-solid fa-pencil"></i>
-						</button>
 						<button id="eliminar-canciones">
-							<i class="fa-solid fa-trash"></i>
-						</button>
-					</div>
-					<div class="modificar-playlists">
-						<h3>Playlists</h3>
-						<button id="modificar-playlists">
-							<i class="fa-solid fa-pencil"></i>
-						</button>
-						<button id="eliminar-playlists">
 							<i class="fa-solid fa-trash"></i>
 						</button>
 					</div>
@@ -92,6 +87,14 @@
 				</div>
 
 				<div class="mini-controls">
+					<button
+						class="btn-mini"
+						id="miniShuffleBtn"
+						title="Activar modo aleatorio"
+					>
+						<i class="fa-solid fa-shuffle"></i>
+					</button>
+
 					<button class="btn-mini" id="miniPrevBtn">
 						<i class="fa-solid fa-backward-step"></i>
 					</button>
@@ -163,8 +166,15 @@
 
 								<span id="durationTime">0:00</span>
 							</div>
-
 							<div class="controls-container">
+								<button
+									class="btn"
+									id="shuffleBtn"
+									title="Activar modo aleatorio"
+								>
+									<i class="fa-solid fa-shuffle"></i>
+								</button>
+
 								<button class="btn" id="prevBtn">
 									<i class="fa-solid fa-backward"></i>
 								</button>
@@ -505,12 +515,194 @@
 			</div>
 		</div>
 
+		<!-- MODAL PARA EDITAR PLAYLIST -->
+		<div class="modal-overlay" id="editPlaylistModalOverlay">
+			<div class="add-song-modal add-playlist-modal delete-song-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title" id="editPlaylistTitle">Editar playlist</h2>
+						<p class="modal-subtitle" id="editPlaylistSubtitle">
+							Modifica el nombre, la portada y las canciones
+						</p>
+					</div>
+					<button class="modal-close-btn" id="closeEditPlaylistModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- ============ PASO 1: nombre, portada y quitar canciones ============ -->
+				<div class="modal-body delete-song-modal-body" id="editPlaylistStep1">
+					<!-- Columna izquierda: datos de la playlist + seleccionadas para quitar -->
+					<div class="modal-col delete-selection-panel">
+						<div class="form-group">
+							<label for="editPlaylistImage">
+								<i class="fa-solid fa-image"></i> Portada de la playlist
+							</label>
+							<div
+								class="file-drop-zone image-drop-zone"
+								id="editPlaylistImageDropZone"
+							>
+								<div
+									class="image-preview-wrapper"
+									id="editPlaylistImagePreviewWrapper"
+								>
+									<i class="fa-solid fa-image drop-icon"></i>
+									<span class="drop-text">Selecciona una imagen</span>
+								</div>
+								<input type="file" id="editPlaylistImage" accept="image/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="editPlaylistName">
+								<i class="fa-solid fa-pen"></i> Nombre de la playlist
+							</label>
+							<input
+								type="text"
+								id="editPlaylistName"
+								placeholder="Ej: Para estudiar"
+							/>
+						</div>
+
+						<button class="btn-save-song" id="saveEditPlaylistInfoBtn">
+							<i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+						</button>
+
+						<div class="section-marker"></div>
+
+						<div class="delete-selection-header">
+							<div>
+								<h3 class="lyrics-col-title">Para quitar de la playlist</h3>
+								<span
+									class="delete-selection-count"
+									id="editPlaylistRemoveCount"
+								>
+									Ninguna canción seleccionada
+								</span>
+							</div>
+						</div>
+
+						<div class="delete-selected-list" id="editPlaylistRemoveList">
+							<div class="delete-selected-empty">
+								<i class="fa-solid fa-check"></i>
+								<p>Selecciona canciones para quitarlas</p>
+								<span>Aquí aparecerán las canciones que elijas.</span>
+							</div>
+						</div>
+
+						<button
+							class="btn-save-song delete-confirm-btn"
+							id="confirmRemoveFromPlaylistBtn"
+							disabled
+						>
+							<i class="fa-solid fa-trash"></i>
+							Quitar seleccionadas
+						</button>
+
+						<div class="section-marker"></div>
+
+						<button
+							class="btn-save-song delete-confirm-btn"
+							id="deletePlaylistBtn"
+							type="button"
+						>
+							<i class="fa-solid fa-trash-can"></i>
+							Eliminar esta playlist
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- Columna derecha: canciones actuales de la playlist -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Canciones en la playlist</h3>
+							<button class="search-lyrics-btn" id="openAddSongToPlaylistBtn">
+								<i class="fa-solid fa-plus"></i>
+								<span>Agregar canción</span>
+							</button>
+						</div>
+
+						<div class="playlist-song-list" id="editPlaylistSongList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+
+				<!-- ============ PASO 2: agregar canciones a la playlist ============ -->
+				<div
+					class="modal-body delete-song-modal-body hidden"
+					id="editPlaylistStep2"
+				>
+					<!-- Columna izquierda: seleccionadas para agregar -->
+					<div class="modal-col delete-selection-panel">
+						<button
+							class="search-lyrics-btn"
+							id="backToEditPlaylistBtn"
+							style="margin-bottom: 16px; width: fit-content"
+						>
+							<i class="fa-solid fa-arrow-left"></i>
+							<span>Volver</span>
+						</button>
+
+						<div class="delete-selection-header">
+							<div>
+								<h3 class="lyrics-col-title">Para agregar</h3>
+								<span class="delete-selection-count" id="editPlaylistAddCount">
+									Ninguna canción seleccionada
+								</span>
+							</div>
+						</div>
+
+						<div class="delete-selected-list" id="editPlaylistAddSelectedList">
+							<div class="delete-selected-empty">
+								<i class="fa-solid fa-check"></i>
+								<p>Selecciona una o más canciones</p>
+								<span>Aquí aparecerán las canciones que elijas.</span>
+							</div>
+						</div>
+
+						<button class="btn-save-song" id="confirmAddToPlaylistBtn" disabled>
+							<i class="fa-solid fa-plus"></i> Agregar seleccionadas
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- Columna derecha: canciones disponibles para agregar -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Tus canciones</h3>
+							<div class="playlist-search-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<input
+									type="text"
+									id="addToPlaylistSearch"
+									placeholder="Buscar canción o artista..."
+								/>
+							</div>
+						</div>
+
+						<div class="playlist-song-list" id="addToPlaylistList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<script src="JS/router.js"></script>
+		<script src="JS/favoritos.js"></script>
 		<script src="JS/home.js"></script>
 		<script src="JS/library.js"></script>
 		<script src="JS/modal-agregar-cancion.js"></script>
 		<script src="JS/eliminarCancion.js"></script>
 		<script src="JS/playlist.js"></script>
+		<script src="JS/editarPlaylist.js"></script>
 		<script src="JS/renderer.js"></script>
+		<script src="JS/dialogo.js"></script>
 	</body>
 </html>

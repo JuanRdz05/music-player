@@ -208,10 +208,12 @@
 		const total = idsSeleccionados.size;
 		if (total === 0) return;
 
-		// Cuadro de confirmación nativo requerido
-		const confirmado = confirm(
-			`¿Estás seguro de que deseas enviar a la papelera ${total} canción${total === 1 ? "" : "es"}?`,
-		);
+		const confirmado = await confirmar({
+			titulo: "Enviar a la papelera",
+			mensaje: `¿Estás seguro de que deseas enviar a la papelera ${total} canción${total === 1 ? "" : "es"}?`,
+			textoConfirmar: "Eliminar",
+			tipo: "peligro",
+		});
 		if (!confirmado) return;
 
 		const idsArray = Array.from(idsSeleccionados);
@@ -223,10 +225,13 @@
 			const resultado = await ipcRenderer.invoke("delete-songs", idsArray);
 
 			if (!resultado || !resultado.success) {
-				alert(
-					(resultado && resultado.error) ||
+				await avisar({
+					titulo: "No se pudo eliminar",
+					mensaje:
+						(resultado && resultado.error) ||
 						"No se pudieron eliminar las canciones",
-				);
+					tipo: "peligro",
+				});
 				return;
 			}
 
@@ -238,7 +243,11 @@
 			}
 		} catch (error) {
 			console.error("Error al eliminar canciones:", error);
-			alert("Ocurrió un error al procesar la eliminación");
+			await avisar({
+				titulo: "Error",
+				mensaje: "Ocurrió un error al procesar la eliminación",
+				tipo: "peligro",
+			});
 		} finally {
 			confirmDeleteBtn.innerHTML = textoOriginal;
 			actualizarEstadoBoton();

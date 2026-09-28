@@ -1,0 +1,98 @@
+/* =========================================================
+   FAVORITOS  (agregar en index.html: <link rel="stylesheet" href="CSS/favorites.css" />)
+   ========================================================= */
+
+/* Necesario para ubicar la estrella en la esquina de la tarjeta */
+.song-card {
+	position: relative;
+}
+
+/* ── Estrella sobre la tarjeta ─────────────────────────── */
+
+.fav-btn {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 2; /* por encima del play de la miniatura */
+
+	width: 30px;
+	height: 30px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border: none;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.55);
+	color: var(--blanco);
+	font-size: 13px;
+
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY(-4px);
+
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease,
+		background-color 0.2s ease,
+		color 0.2s ease;
+}
+
+/* Aparece al pasar el mouse; si ya es favorita, queda siempre visible */
+.song-card:hover .fav-btn,
+.fav-btn.active {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.fav-btn.active {
+	color: #ffc107;
+}
+
+.fav-btn:hover {
+	background: rgba(255, 193, 7, 0.2);
+	color: #ffc107;
+}
+
+.fav-btn:active {
+	transform: scale(0.9);
+}
+
+.fav-btn:disabled {
+	cursor: default;
+}
+
+/* ── Encabezado de la vista ────────────────────────────── */
+
+.favorites-title-group {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.favorites-title-icon {
+	margin-right: 6px;
+	font-size: 22px;
+	color: #ffc107;
+}
+
+.favorites-count {
+	padding: 3px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #a0a0a0;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 999px;
+}
+
+.favorites-count[hidden] {
+	display: none;
+}
+
+/* ── Sin animación de entrada al buscar / ordenar / quitar ── */
+
+.card-container.no-anim > .song-card {
+	animation: none;
+}

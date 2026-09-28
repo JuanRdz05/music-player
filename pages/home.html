@@ -11,23 +11,13 @@
 
 	<section class="home-content">
 		<!-- SECCIÓN CANCIONES -->
-		<div
-			class="header-container"
-			style="
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding-right: 20px;
-			"
-		>
-			<h2 class="ms-3">Agregadas recientemente</h2>
-			<!-- Aquí está la magia: el data-route="library" -->
+		<div class="section-header">
+			<div class="section-heading">
+				<h2 class="section-heading-title">Agregadas recientemente</h2>
+			</div>
 			<a href="#" data-route="library" class="btn-mostrar-todo">
 				Mostrar todas
-				<i
-					class="fa-solid fa-chevron-right"
-					style="margin-left: 5px; font-size: 12px"
-				></i>
+				<i class="fa-solid fa-chevron-right"></i>
 			</a>
 		</div>
 
@@ -35,12 +25,19 @@
 			<div class="card-container" id="home-songs-container"></div>
 		</div>
 
-		<!-- SECCIÓN PLAYLISTS -->
-		<div class="header-container" style="margin-top: 2rem">
-			<h2 class="ms-3">PlayList agregadas recientemente</h2>
+		<!-- SEPARADOR ENTRE SECCIONES -->
+		<div class="section-divider" role="separator">
+			<i class="fa-solid fa-music"></i>
 		</div>
+
+		<!-- SECCIÓN PLAYLISTS -->
+		<div class="section-header">
+			<div class="section-heading">
+				<h2 class="section-heading-title">Playlists agregadas recientemente</h2>
+			</div>
+		</div>
+
 		<div class="song-list-container">
-			<!-- Observa la clase extra "playlist-container-home" -->
 			<div class="card-container playlist-container-home"></div>
 		</div>
 	</section>

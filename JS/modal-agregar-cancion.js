@@ -56,6 +56,11 @@
 	let lyricsData = null;
 	let lyricsDecision = null; // 'accept' | 'skip' | null
 
+	// Contenido normal del botón "Guardar canción". Se captura UNA sola vez,
+	// al cargar el script, para poder restaurarlo siempre igual.
+	const HTML_GUARDAR = saveSongBtn.innerHTML;
+	let timerErrorGuardar = null;
+
 	// ─── Helpers de UI ─────────────────────────────────────────────────────
 
 	function showLyricsState(state) {
@@ -82,7 +87,20 @@
 		const tieneArchivo = audioPath !== null;
 		const tieneImagen = imagePath !== null;
 		const tieneDecision = lyricsDecision !== null;
-		saveSongBtn.disabled = !(titulo && artista && tieneArchivo && tieneImagen && tieneDecision);
+		saveSongBtn.disabled = !(
+			titulo &&
+			artista &&
+			tieneArchivo &&
+			tieneImagen &&
+			tieneDecision
+		);
+	}
+
+	// Devuelve el botón a su texto normal y recalcula si debe estar habilitado.
+	function restaurarBotonGuardar() {
+		clearTimeout(timerErrorGuardar);
+		saveSongBtn.innerHTML = HTML_GUARDAR;
+		actualizarGuardarBtn();
 	}
 
 	function marcarDecisionLetra(decision) {
@@ -96,11 +114,11 @@
 		lyricsData = null;
 		lyricsDecision = null;
 		showLyricsState("placeholder");
-		
+
 		lyricsActions.classList.remove("hidden");
 		lyricsStatusBadge.classList.add("hidden");
 		acceptLyricsBtn.classList.add("hidden");
-		
+
 		acceptLyricsBtn.classList.remove("active");
 		skipLyricsBtn.classList.remove("active");
 	}
@@ -142,7 +160,7 @@
 
 		resetearLetra();
 		actualizarBuscarLetraBtn();
-		actualizarGuardarBtn();
+		restaurarBotonGuardar();
 	}
 
 	// ─── Manejo de archivos ────────────────────────────────────────────────
@@ -153,7 +171,9 @@
 
 		audioPath = _webUtils ? _webUtils.getPathForFile(file) : file.path;
 		if (!audioPath) {
-			console.error("No se pudo obtener la ruta del archivo. ¿La app tiene permisos?");
+			console.error(
+				"No se pudo obtener la ruta del archivo. ¿La app tiene permisos?",
+			);
 			return;
 		}
 
@@ -205,7 +225,7 @@
 		img.alt = "Preview";
 		imagePreviewWrapper.insertBefore(img, imageFileNameEl);
 		imageFileNameEl.textContent = file.name;
-		
+
 		actualizarGuardarBtn();
 	});
 
@@ -255,7 +275,8 @@
 				lyricsStatusBadge.className = "lyrics-status-badge not-found";
 				lyricsStatusBadge.classList.remove("hidden");
 				lyricsStatusText.textContent = "Sin letra disponible";
-				lyricsStatusBadge.querySelector("i").className = "fa-solid fa-circle-xmark";
+				lyricsStatusBadge.querySelector("i").className =
+					"fa-solid fa-circle-xmark";
 				lyricsStatusBadge.querySelector("i").style.color = "var(--rojo)";
 
 				lyricsActions.classList.remove("hidden");
@@ -283,7 +304,8 @@
 				return;
 			}
 
-			const textoPreview = resultado.syncedLyrics || resultado.plainLyrics || "";
+			const textoPreview =
+				resultado.syncedLyrics || resultado.plainLyrics || "";
 			lyricsPreviewText.textContent = textoPreview;
 			showLyricsState("result");
 
@@ -291,7 +313,8 @@
 			lyricsStatusText.textContent = resultado.syncedLyrics
 				? "Letra sincronizada encontrada"
 				: "Letra encontrada";
-			lyricsStatusBadge.querySelector("i").className = "fa-solid fa-check-circle";
+			lyricsStatusBadge.querySelector("i").className =
+				"fa-solid fa-check-circle";
 			lyricsStatusBadge.querySelector("i").style.color = "#4caf50";
 
 			lyricsActions.classList.remove("hidden");
@@ -308,7 +331,9 @@
 
 	// ─── Decisión sobre la letra ───────────────────────────────────────────
 
-	acceptLyricsBtn.addEventListener("click", () => marcarDecisionLetra("accept"));
+	acceptLyricsBtn.addEventListener("click", () =>
+		marcarDecisionLetra("accept"),
+	);
 	skipLyricsBtn.addEventListener("click", () => marcarDecisionLetra("skip"));
 
 	// ─── Guardar canción ───────────────────────────────────────────────────
@@ -319,7 +344,8 @@
 		if (!nombre || !artista || !audioPath) return;
 
 		saveSongBtn.disabled = true;
-		saveSongBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+		saveSongBtn.innerHTML =
+			'<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
 		try {
 			let lyrics = null;
@@ -351,18 +377,13 @@
 				saveSongBtn.innerHTML =
 					'<i class="fa-solid fa-triangle-exclamation"></i> ' +
 					(resultado.error || "Error al guardar");
-				setTimeout(() => {
-					saveSongBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar canción';
-					saveSongBtn.disabled = false;
-				}, 3000);
+				timerErrorGuardar = setTimeout(restaurarBotonGuardar, 3000);
 			}
 		} catch (err) {
 			console.error("Error IPC add-song:", err);
-			saveSongBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Error';
-			setTimeout(() => {
-				saveSongBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar canción';
-				saveSongBtn.disabled = false;
-			}, 3000);
+			saveSongBtn.innerHTML =
+				'<i class="fa-solid fa-triangle-exclamation"></i> Error';
+			timerErrorGuardar = setTimeout(restaurarBotonGuardar, 3000);
 		}
 	});
 
@@ -383,7 +404,10 @@
 	});
 
 	document.addEventListener("keydown", (e) => {
-		if (e.key === "Escape" && addSongModalOverlay.classList.contains("active")) {
+		if (
+			e.key === "Escape" &&
+			addSongModalOverlay.classList.contains("active")
+		) {
 			cerrarAddSongModal();
 			resetearModal();
 		}

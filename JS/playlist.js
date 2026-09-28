@@ -1,20 +1,6 @@
 // JS/playlist.js
-//
-// Todo el archivo va envuelto en un IIFE para no declarar variables en el
-// scope global: los <script> de este proyecto no son módulos y comparten
-// el mismo scope global entre ellos, así que un "const" repetido en dos
-// archivos (por ejemplo "formatTime") rompería al otro script con un
-// SyntaxError. Con el IIFE evitamos ese problema.
+
 (function () {
-	// Igual que en renderer.js: con nodeIntegration activado no hace falta
-	// pasar por window.music/window.playlists (el preload de este proyecto
-	// no se está cargando actualmente, ver nota al final del archivo),
-	// así que hablamos con el proceso principal directamente por IPC.
-	//
-	// webUtils.getPathForFile(): en Electron moderno File.path ya no existe;
-	// esta es la forma oficial de obtener la ruta real de un archivo
-	// elegido con <input type="file">. Es el MISMO método que usa
-	// modal-agregar-cancion.js para las portadas de las canciones.
 	const { ipcRenderer, webUtils } = require("electron");
 	const formatTime = require("./JS/formatTime.js");
 
@@ -210,9 +196,12 @@
 			});
 
 			if (!resultado || !resultado.success) {
-				alert(
-					(resultado && resultado.error) || "No se pudo guardar la playlist",
-				);
+				await avisar({
+					titulo: "No se pudo guardar",
+					mensaje:
+						(resultado && resultado.error) || "No se pudo guardar la playlist",
+					tipo: "peligro",
+				});
 				return;
 			}
 
@@ -223,7 +212,11 @@
 			}
 		} catch (error) {
 			console.error("Error al guardar la playlist:", error);
-			alert("Ocurrió un error al guardar la playlist");
+			await avisar({
+				titulo: "Error",
+				mensaje: "Ocurrió un error al guardar la playlist",
+				tipo: "peligro",
+			});
 		} finally {
 			saveBtn.innerHTML = textoOriginal;
 			actualizarEstadoGuardar();

@@ -1,6 +1,15 @@
 const mainContent = document.getElementById("app-main-content");
 const navLinks = document.querySelectorAll(".nav-link");
 
+// Qué función "init" ejecutar al cargar cada vista.
+// Para agregar una vista nueva: crea pages/<ruta>.html, su init, y
+// regístrala aquí.
+const inicializadoresDeVista = {
+	home: () => window.initHomeView?.(),
+	library: () => window.initLibraryView?.(),
+	favorites: () => window.initFavoritesView?.(),
+};
+
 async function navigateTo(route) {
 	try {
 		const response = await fetch(`pages/${route}.html`);
@@ -13,14 +22,7 @@ async function navigateTo(route) {
 		const html = await response.text();
 		mainContent.innerHTML = html;
 
-		if (route === "home" && typeof window.initHomeView === "function") {
-			window.initHomeView();
-		} else if (
-			route === "library" &&
-			typeof window.initLibraryView === "function"
-		) {
-			window.initLibraryView();
-		}
+		inicializadoresDeVista[route]?.();
 
 		// Actualizar active classes en el sidebar
 		navLinks.forEach((link) => {

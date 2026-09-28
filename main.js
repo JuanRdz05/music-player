@@ -190,11 +190,52 @@ ipcMain.handle("get-playlists", () => {
 	return obtenerPlaylists();
 });
 
+// Obtener una sola playlist (nombre + imagen), para precargar el modal de edición
+ipcMain.handle("get-playlist", (event, playlistId) => {
+	const { obtenerPlaylistPorId } = require("./controllers/playlists.js");
+	return obtenerPlaylistPorId(playlistId);
+});
+
 // Obtener las canciones de una playlist específica, en orden
 ipcMain.handle("get-playlist-songs", (event, playlistId) => {
 	const { obtenerCancionesDePlaylist } = require("./controllers/playlists.js");
 	return obtenerCancionesDePlaylist(playlistId);
 });
+
+// Obtener las canciones que TODAVÍA NO están en una playlist (paso "Agregar canción")
+ipcMain.handle("get-songs-not-in-playlist", (event, playlistId) => {
+	const {
+		obtenerCancionesFueraDePlaylist,
+	} = require("./controllers/playlists.js");
+	return obtenerCancionesFueraDePlaylist(playlistId);
+});
+
+// Agregar una canción existente a una playlist existente
+ipcMain.handle("add-song-to-playlist", (event, { playlistId, cancionId }) => {
+	const { agregarCancionAPlaylist } = require("./controllers/playlists.js");
+	try {
+		agregarCancionAPlaylist(playlistId, cancionId);
+		return { success: true };
+	} catch (error) {
+		console.error("Error al agregar canción a la playlist:", error);
+		return { success: false, error: error.message };
+	}
+});
+
+// Quitar una o más canciones de una playlist (no las borra de la biblioteca)
+ipcMain.handle(
+	"remove-songs-from-playlist",
+	(event, { playlistId, cancionIds }) => {
+		const { quitarCancionesDePlaylist } = require("./controllers/playlists.js");
+		try {
+			const resultado = quitarCancionesDePlaylist(playlistId, cancionIds);
+			return { success: true, changes: resultado.changes };
+		} catch (error) {
+			console.error("Error al quitar canciones de la playlist:", error);
+			return { success: false, error: error.message };
+		}
+	},
+);
 
 // Crear una nueva playlist: copia la portada (si hay) y guarda el registro
 ipcMain.handle(
@@ -229,6 +270,72 @@ ipcMain.handle(
 		}
 	},
 );
+
+// Actualizar nombre y/o portada de una playlist existente
+ipcMain.handle("update-playlist", async (event, { id, nombre, imagePath }) => {
+	const fs = require("fs");
+	const { actualizarPlaylist } = require("./controllers/playlists.js");
+
+	try {
+		// undefined = no se tocó la portada, se conserva la actual
+		let imagenRelativa;
+
+		if (imagePath) {
+			const playlistImgDir = path.join(__dirname, "img", "playlists");
+			if (!fs.existsSync(playlistImgDir)) {
+				fs.mkdirSync(playlistImgDir, { recursive: true });
+			}
+
+			const imgExt = path.extname(imagePath);
+			const imgBaseName = `${Date.now()}-${nombre}${imgExt}`;
+			const imgDest = path.join(playlistImgDir, imgBaseName);
+			fs.copyFileSync(imagePath, imgDest);
+			imagenRelativa = `img/playlists/${imgBaseName}`;
+		}
+
+		actualizarPlaylist({ id, nombre, imagen: imagenRelativa });
+		return { success: true };
+	} catch (err) {
+		console.error("Error al actualizar playlist:", err);
+		return { success: false, error: err.message };
+	}
+});
+
+// Eliminar (borrado lógico) una playlist completa
+ipcMain.handle("delete-playlist", (event, playlistId) => {
+	const { borrarPlaylistLogico } = require("./controllers/playlists.js");
+	try {
+		const resultado = borrarPlaylistLogico(playlistId);
+		return { success: true, changes: resultado.changes };
+	} catch (error) {
+		console.error("Error al eliminar la playlist:", error);
+		return { success: false, error: error.message };
+	}
+});
+
+// Obtener las canciones favoritas (más recientes primero)
+ipcMain.handle("get-favorites", () => {
+	const { obtenerFavoritos } = require("./controllers/favoritos.js");
+	return obtenerFavoritos();
+});
+
+// Obtener solo los ids de las canciones favoritas (para pintar las estrellas)
+ipcMain.handle("get-favorite-ids", () => {
+	const { obtenerIdsFavoritos } = require("./controllers/favoritos.js");
+	return obtenerIdsFavoritos();
+});
+
+// Marcar / desmarcar una canción como favorita
+ipcMain.handle("toggle-favorite", (event, cancionId) => {
+	const { alternarFavorito } = require("./controllers/favoritos.js");
+	try {
+		const esFavorito = alternarFavorito(cancionId);
+		return { success: true, esFavorito };
+	} catch (error) {
+		console.error("Error al alternar favorito:", error);
+		return { success: false, error: error.message };
+	}
+});
 
 app.whenReady().then(async () => {
 	try {
