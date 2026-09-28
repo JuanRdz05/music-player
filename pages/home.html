@@ -1,0 +1,44 @@
+<div class="home-view">
+	<header id="header">
+		<h1>Inicio</h1>
+		<nav id="nav">
+			<ul
+				id="ul"
+				style="display: flex; gap: 20px; list-style: none; padding: 0"
+			></ul>
+		</nav>
+	</header>
+
+	<section class="home-content">
+		<!-- SECCIÓN CANCIONES -->
+		<div class="section-header">
+			<div class="section-heading">
+				<h2 class="section-heading-title">Agregadas recientemente</h2>
+			</div>
+			<a href="#" data-route="library" class="btn-mostrar-todo">
+				Mostrar todas
+				<i class="fa-solid fa-chevron-right"></i>
+			</a>
+		</div>
+
+		<div class="song-list-container">
+			<div class="card-container" id="home-songs-container"></div>
+		</div>
+
+		<!-- SEPARADOR ENTRE SECCIONES -->
+		<div class="section-divider" role="separator">
+			<i class="fa-solid fa-music"></i>
+		</div>
+
+		<!-- SECCIÓN PLAYLISTS -->
+		<div class="section-header">
+			<div class="section-heading">
+				<h2 class="section-heading-title">Playlists agregadas recientemente</h2>
+			</div>
+		</div>
+
+		<div class="song-list-container">
+			<div class="card-container playlist-container-home"></div>
+		</div>
+	</section>
+</div>

@@ -1,0 +1,739 @@
+/* ============================= */
+/* Encabezado del home           */
+/* ============================= */
+
+.home-header {
+	margin-bottom: 30px;
+}
+
+.home-header h1 {
+	margin: 0 0 6px 0;
+	font-size: 28px;
+	font-weight: 700;
+	letter-spacing: 0.3px;
+	color: var(--blanco);
+}
+
+.home-subtitle {
+	margin: 0;
+	font-size: 14px;
+	color: #a0a0a0;
+}
+
+/* ============================= */
+/* Título de sección             */
+/* ============================= */
+
+.section-title {
+	margin: 0 0 16px 0;
+	padding-left: 12px;
+	border-left: 4px solid var(--rojo);
+
+	font-size: 16px;
+	font-weight: 600;
+	letter-spacing: 0.6px;
+	text-transform: uppercase;
+	color: var(--blanco);
+}
+
+/* ============================= */
+/* Listado de canciones del home */
+/* ============================= */
+
+.song-list-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* Sin padding propio: #app-main-content ya da el margen general,
+	   así el título y las tarjetas quedan alineados en el mismo borde */
+}
+
+.card-container {
+	--gutter: 14px;
+
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	gap: 16px;
+	align-content: start;
+	max-height: 420px;
+	overflow-y: auto;
+
+	padding: var(--gutter);
+	margin: calc(var(--gutter) * -1);
+}
+
+/* Scrollbar delgado, mismo estilo que el resto de la app */
+.card-container::-webkit-scrollbar {
+	width: 6px;
+}
+
+.card-container::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.card-container::-webkit-scrollbar-thumb {
+	background-color: rgba(230, 57, 70, 0.4);
+	border-radius: 10px;
+}
+
+.card-container::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(230, 57, 70, 0.7);
+}
+
+.song-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-width: 0; /* permite que el texto truncado funcione dentro del grid */
+
+	background-color: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 10px;
+	padding: 12px;
+
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		transform 0.2s ease;
+}
+
+.song-card:hover {
+	background-color: rgba(230, 57, 70, 0.1);
+	border-color: rgba(230, 57, 70, 0.3);
+}
+
+.song-image {
+	width: 80px;
+	height: 80px;
+	border-radius: 8px;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.song-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.song-name {
+	margin: 0 0 4px 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--blanco);
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.song-artist {
+	margin: 0;
+	font-size: 13px;
+	color: #a0a0a0;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/*Agregar canción button*/
+
+.add-song-btn {
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	padding: 5px 10px;
+	color: var(--blanco);
+	background-color: var(--negro-mas-oscuro);
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease,
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.add-song-btn:hover {
+	background-color: var(--rojo);
+}
+
+.add-song-btn:active {
+	transform: scale(0.98);
+}
+
+.header-container {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: row;
+	gap: 50px;
+	padding-left: 30px;
+}
+
+/*Agregar playlist*/
+
+.add-playlist-btn {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 24px;
+	padding: 10px 16px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--blanco);
+	background-color: var(--negro-mas-oscuro);
+	border: 1px solid var(--rojo);
+	border-radius: 8px;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease,
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.add-playlist-btn:hover {
+	background-color: var(--negro-suave);
+	transform: translateY(-1px);
+}
+
+.add-playlist-btn:active {
+	transform: scale(0.98);
+}
+
+/*SideBar buttons div*/
+
+.sidebar-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.btn-mostrar-todo {
+	color: #a0a0a0; /* Color grisáceo */
+	text-decoration: none; /* Quita el subrayado */
+	font-size: 14px;
+	font-weight: 600;
+	transition: color 0.2s ease;
+}
+
+.btn-mostrar-todo:hover {
+	color: #ffffff; /* Se ilumina en blanco al pasar el mouse */
+}
+
+.section-marker {
+	height: 1px;
+	background-color: rgba(255, 255, 255, 0.1);
+	margin: 24px 24px 16px 24px; /* Margen superior e inferior para separar secciones */
+}
+
+/* ============================= */
+/* Modificadores (Editar/Eliminar)*/
+/* ============================= */
+
+.contenedor-modificadores {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 0 24px;
+}
+
+.modificar-canciones,
+.modificar-playlists {
+	display: flex;
+	align-items: center;
+	gap: 8px; /* Espacio entre el título y los botones */
+}
+
+.modificar-canciones h3,
+.modificar-playlists h3 {
+	margin: 0;
+	flex: 1; /* Esto empuja los botones hacia la derecha */
+	font-size: 11px;
+	font-weight: 700;
+	color: #7a7a7a;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+}
+
+/* Estilos de los botones de editar y eliminar */
+.contenedor-modificadores button {
+	background-color: transparent;
+	border: none;
+	color: #a0a0a0;
+	font-size: 13px;
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease,
+		transform 0.1s ease;
+}
+
+/* Hover para el botón de editar (Lápiz) */
+#modificar-canciones:hover,
+#modificar-playlists:hover {
+	background-color: rgba(255, 255, 255, 0.08);
+	color: var(--blanco);
+}
+
+/* Hover para el botón de eliminar (Basurero) - Se vuelve rojo */
+#eliminar-canciones:hover,
+#eliminar-playlists:hover {
+	background-color: rgba(230, 57, 70, 0.15);
+	color: var(--rojo);
+}
+
+/* Efecto de clic para todos los botones */
+.contenedor-modificadores button:active {
+	transform: scale(0.92);
+}
+
+/* =========================================================
+   MODAL ELIMINAR CANCIONES
+   ========================================================= */
+
+.delete-song-modal {
+	width: min(1050px, 90vw);
+}
+
+.delete-song-modal-body {
+	min-height: 500px;
+}
+
+/* Panel izquierdo */
+
+.delete-selection-panel {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.delete-selection-header {
+	margin-bottom: 18px;
+}
+
+.delete-selection-header .lyrics-col-title {
+	margin-bottom: 6px;
+}
+
+.delete-selection-count {
+	font-size: 13px;
+	color: #7a7a7a;
+}
+
+.delete-selected-list {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding-right: 5px;
+}
+
+/* Canción seleccionada */
+
+.delete-selected-item {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+
+	padding: 9px;
+	margin-bottom: 7px;
+
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.035);
+
+	transition:
+		background 0.2s ease,
+		transform 0.2s ease;
+}
+
+.delete-selected-item:hover {
+	background: rgba(255, 255, 255, 0.07);
+	transform: translateX(2px);
+}
+
+.delete-selected-thumb {
+	width: 42px;
+	height: 42px;
+
+	flex-shrink: 0;
+
+	border-radius: 7px;
+	overflow: hidden;
+}
+
+.delete-selected-thumb img {
+	width: 100%;
+	height: 100%;
+
+	object-fit: cover;
+	display: block;
+}
+
+.delete-selected-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.delete-selected-name {
+	margin: 0;
+
+	font-size: 13px;
+	font-weight: 500;
+
+	color: #f5f5f5;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.delete-selected-artist {
+	margin: 3px 0 0;
+
+	font-size: 11px;
+	color: #7a7a7a;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.delete-selected-remove {
+	width: 28px;
+	height: 28px;
+
+	flex-shrink: 0;
+
+	border: none;
+	border-radius: 50%;
+
+	background: transparent;
+	color: #777;
+
+	cursor: pointer;
+
+	transition:
+		background 0.2s ease,
+		color 0.2s ease;
+}
+
+.delete-selected-remove:hover {
+	background: rgba(230, 57, 70, 0.12);
+	color: var(--rojo);
+}
+
+/* Estado vacío */
+
+.delete-selected-empty {
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	text-align: center;
+
+	padding: 30px 20px;
+	color: #666;
+}
+
+.delete-selected-empty i {
+	font-size: 26px;
+	margin-bottom: 14px;
+	color: #555;
+}
+
+.delete-selected-empty p {
+	margin: 0 0 6px;
+
+	font-size: 13px;
+	color: #888;
+}
+
+.delete-selected-empty span {
+	max-width: 210px;
+
+	font-size: 11px;
+	line-height: 1.5;
+	color: #555;
+}
+
+/* Botón */
+
+.delete-confirm-btn {
+	margin-top: 18px;
+
+	background-color: var(--rojo) !important;
+}
+
+.delete-confirm-btn:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+/* Scrollbar del panel de seleccionadas */
+
+.delete-selected-list::-webkit-scrollbar {
+	width: 5px;
+}
+
+.delete-selected-list::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.delete-selected-list::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.12);
+	border-radius: 10px;
+}
+
+/* =========================================================
+   BOTÓN "EDITAR" SOBRE LA TARJETA DE PLAYLIST (home)
+   ========================================================= */
+
+.playlist-card-home {
+	position: relative;
+}
+
+.playlist-edit-btn {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+
+	width: 30px;
+	height: 30px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border: none;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.55);
+	color: var(--blanco);
+	font-size: 13px;
+
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY(-4px);
+
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.playlist-card-home:hover .playlist-edit-btn {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.playlist-edit-btn:hover {
+	background-color: var(--rojo);
+}
+
+/* ── Encabezado de sección ─────────────────────────────── */
+
+.section-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 16px;
+	padding-right: 8px;
+}
+
+.section-heading {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-left: 12px;
+	border-left: 4px solid var(--rojo);
+}
+
+.section-heading-title {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.2px;
+	color: var(--blanco);
+}
+
+/* Contador tipo "6 de 24" */
+.section-count {
+	padding: 3px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #a0a0a0;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 999px;
+}
+
+.section-count[hidden] {
+	display: none;
+}
+
+/* La flecha de "Mostrar todas" se desplaza un poco al pasar el mouse */
+.btn-mostrar-todo i {
+	margin-left: 5px;
+	font-size: 12px;
+	transition: transform 0.2s ease;
+}
+
+.btn-mostrar-todo:hover i {
+	transform: translateX(3px);
+}
+
+/* ── Separador entre secciones ─────────────────────────── */
+
+.section-divider {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 36px 0 32px;
+}
+
+.section-divider::before,
+.section-divider::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.14),
+		transparent
+	);
+}
+
+.section-divider i {
+	font-size: 12px;
+	color: rgba(230, 57, 70, 0.7);
+}
+
+/* ── Estado vacío (sin canciones / sin playlists) ──────── */
+
+.empty-state {
+	grid-column: 1 / -1; /* ocupa todo el ancho del grid */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 36px 20px;
+	text-align: center;
+
+	background: rgba(255, 255, 255, 0.02);
+	border: 1.5px dashed rgba(255, 255, 255, 0.12);
+	border-radius: 12px;
+}
+
+.empty-state-icon {
+	width: 56px;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 8px;
+
+	font-size: 22px;
+	color: var(--rojo);
+	background: rgba(230, 57, 70, 0.12);
+	border-radius: 50%;
+}
+
+.empty-state-title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--blanco);
+}
+
+.empty-state-text {
+	margin: 0;
+	max-width: 340px;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #7a7a7a;
+}
+
+/* ── Tarjetas: miniatura con botón de play al pasar el mouse ── */
+
+.song-thumb {
+	position: relative;
+	width: 80px;
+	height: 80px;
+	flex-shrink: 0;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.song-thumb .song-image {
+	width: 100%;
+	height: 100%;
+	border-radius: 0;
+	display: block;
+	transition: transform 0.3s ease;
+}
+
+.song-play-overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	font-size: 20px;
+	color: var(--blanco);
+	background: rgba(0, 0, 0, 0.5);
+
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+.song-card:hover .song-play-overlay {
+	opacity: 1;
+}
+
+.song-card:hover .song-image {
+	transform: scale(1.08);
+}
+
+.song-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ── Aparición escalonada de las tarjetas ──────────────── */
+/* "backwards" (no "both") para que al terminar no bloquee
+   el transform del :hover */
+
+.card-container > .song-card {
+	animation: cardIn 0.35s ease backwards;
+	animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+@keyframes cardIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card-container > .song-card {
+		animation: none;
+	}
+}

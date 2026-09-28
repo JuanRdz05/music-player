@@ -1,19 +1,58 @@
 {
 	"name": "electron-app",
-	"version": "1.0.0",
+	"productName": "Banana Music",
+	"version": "1.0.1",
+	"description": "Reproductor de música local",
+	"author": "Juan Rdz",
 	"main": "main.js",
 	"scripts": {
-		"start": "electron ."
+		"start": "electron .",
+		"importar": "electron controllers/importarCanciones.js",
+		"postinstall": "electron-builder install-app-deps",
+		"pack": "electron-builder --dir",
+		"dist": "electron-builder"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"description": "",
 	"devDependencies": {
-		"electron": "^43.3.0"
+		"@electron/rebuild": "^4.2.0",
+		"electron": "^43.3.0",
+		"electron-builder": "^26.15.3"
 	},
 	"dependencies": {
+		"@fortawesome/fontawesome-free": "^7.3.1",
+		"@xhayper/discord-rpc": "^1.5.1",
+		"better-sqlite3": "^13.0.3",
 		"get-mp3-duration": "^1.0.0",
 		"sharp": "^0.35.3"
+	},
+	"build": {
+		"appId": "com.juanrdz.bananamusic",
+		"files": [
+			"main.js",
+			"preload.js",
+			"index.html",
+			"pages/**/*",
+			"CSS/**/*",
+			"JS/**/*",
+			"controllers/**/*",
+			"database/**/*",
+			"utils/**/*",
+			"assets/**/*",
+			"!controllers/importarCanciones.js"
+		],
+		"asarUnpack": [
+			"node_modules/sharp/**/*",
+			"node_modules/@img/**/*",
+			"node_modules/better-sqlite3/**/*"
+		],
+		"win": {
+			"target": "nsis",
+			"icon": "build/icon.png"
+		},
+		"linux": {
+			"target": [
+				"AppImage"
+			],
+			"category": "Audio"
+		}
 	}
 }

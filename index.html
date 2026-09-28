@@ -8,96 +8,701 @@
 
 		<link
 			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+			href="node_modules/@fortawesome/fontawesome-free/css/all.min.css"
 		/>
+		<link rel="stylesheet" href="CSS/home.css" />
+		<link rel="stylesheet" href="CSS/modal.css" />
+		<link rel="stylesheet" href="CSS/playlist-modal.css" />
+		<link rel="stylesheet" href="CSS/library.css" />
+		<link rel="stylesheet" href="CSS/favorites.css" />
+		<link rel="stylesheet" href="CSS/dialogo.css" />
 
-		<title>Reproductor de música</title>
+		<title>Banana Music</title>
 	</head>
 
 	<body>
-		<div class="fondo-container fade-in">
-			<div class="filtro"></div>
-		</div>
-
-		<!-- Contenedor general de la aplicación -->
-		<div class="app-container">
-			<!-- Reproductor -->
-			<main class="reproductor-container">
-				<div class="audio-container">
-					<audio id="reproductor" src=""></audio>
+		<!-- MAIN LAYOUT (YOUTUBE MUSIC STYLE) -->
+		<div class="app-layout">
+			<!-- Sidebar -->
+			<nav class="sidebar">
+				<div class="sidebar-logo">
+					<h2>MusicApp</h2>
 				</div>
+				<ul class="sidebar-nav">
+					<li>
+						<a href="#" data-route="home" class="nav-link active"
+							><i class="fa-solid fa-house"></i> Inicio</a
+						>
+					</li>
+					<li>
+						<a href="#" data-route="library" class="nav-link"
+							><i class="fa-solid fa-book"></i> Biblioteca</a
+						>
+					</li>
+					<li>
+						<a href="#" data-route="favorites" class="nav-link"
+							><i class="fa-solid fa-star"></i> Favoritos</a
+						>
+					</li>
+				</ul>
+				<div class="sidebar-buttons">
+					<button class="sidebar-add-btn" id="openAddSongModalBtn">
+						<i class="fa-solid fa-plus"></i> Agregar canción
+					</button>
+					<button class="add-playlist-btn" id="openAddPlaylistBtn">
+						<i class="fa-solid fa-plus"></i> Agregar playlist
+					</button>
+				</div>
+				<div class="section-marker"></div>
 
-				<div class="layout-container">
-					<div class="image-container" id="song-image">
-						<div class="image-swipe">
-							<img src="" alt="Imagen de la canción" />
-						</div>
-					</div>
-
-					<div class="right-panel">
-						<div class="info-container">
-							<p id="song-name" class="swipe-in"></p>
-						</div>
-
-						<div class="progress-container">
-							<span id="currentTime">0:00</span>
-
-							<input
-								type="range"
-								id="progressBar"
-								value="0"
-								step="0.1"
-								min="0"
-							/>
-
-							<span id="durationTime">0:00</span>
-						</div>
-
-						<div class="controls-container">
-							<button class="btn" id="prevBtn">
-								<i class="fa-solid fa-backward"></i>
-							</button>
-
-							<button class="btn" id="playBtn">
-								<i class="fa-solid fa-play"></i>
-							</button>
-
-							<button class="btn" id="nextBtn">
-								<i class="fa-solid fa-forward"></i>
-							</button>
-
-							<input
-								type="range"
-								id="volumeSlider"
-								value="100"
-								min="0"
-								max="100"
-							/>
-						</div>
+				<div class="contenedor-modificadores">
+					<div class="modificar-canciones">
+						<h3>Canciones</h3>
+						<button id="eliminar-canciones">
+							<i class="fa-solid fa-trash"></i>
+						</button>
 					</div>
 				</div>
+			</nav>
+
+			<!-- Contenedor principal de Vistas -->
+			<main id="app-main-content">
+				<!-- Vistas cargadas dinámicamente aquí -->
 			</main>
-
-			<!-- Panel lateral -->
-			<aside class="panel-derecho">
-				<div class="opciones-contenedor">
-					<button class="btn-opciones active" id="song-queue">
-						<i class="fa-solid fa-list"></i>
-					</button>
-
-					<button class="btn-opciones" id="btn-lyric">
-						<i class="fa-solid fa-music"></i>
-					</button>
-				</div>
-
-				<div class="panel-content">
-					<section id="playlistView" class="panel-view active"></section>
-
-					<section id="lyricsView" class="panel-view">Esta es la letra</section>
-				</div>
-			</aside>
 		</div>
 
+		<!-- MINI PLAYER BAR -->
+		<div class="mini-player-bar" id="miniPlayerBar">
+			<!-- Barra de progreso miniatura en la parte superior -->
+			<div class="mini-progress-wrapper">
+				<div id="miniProgressBar"></div>
+			</div>
+
+			<div class="mini-player-content">
+				<div class="mini-info" id="miniInfoContainer">
+					<img src="" id="mini-song-image" alt="No cover" />
+					<div class="mini-text">
+						<p id="mini-song-name">Ninguna canción</p>
+					</div>
+				</div>
+
+				<div class="mini-controls">
+					<button
+						class="btn-mini"
+						id="miniShuffleBtn"
+						title="Activar modo aleatorio"
+					>
+						<i class="fa-solid fa-shuffle"></i>
+					</button>
+
+					<button class="btn-mini" id="miniPrevBtn">
+						<i class="fa-solid fa-backward-step"></i>
+					</button>
+					<button class="btn-mini" id="miniPlayBtn">
+						<i class="fa-solid fa-play"></i>
+					</button>
+					<button class="btn-mini" id="miniNextBtn">
+						<i class="fa-solid fa-forward-step"></i>
+					</button>
+				</div>
+
+				<div class="mini-actions">
+					<i
+						class="fa-solid fa-volume-high"
+						style="color: #a0a0a0; font-size: 14px; margin-right: 8px"
+					></i>
+					<input
+						type="range"
+						id="miniVolumeSlider"
+						class="mini-volume-slider"
+						value="100"
+						min="0"
+						max="100"
+					/>
+				</div>
+			</div>
+		</div>
+
+		<!-- OVERLAY DEL REPRODUCTOR COMPLETO -->
+		<div class="full-player-overlay" id="fullPlayerOverlay">
+			<div class="fondo-container fade-in">
+				<div class="filtro"></div>
+			</div>
+
+			<button class="close-overlay-btn" id="closeOverlayBtn">
+				<i class="fa-solid fa-chevron-down"></i>
+			</button>
+
+			<!-- Contenedor general de la aplicación -->
+			<div class="app-container">
+				<!-- Reproductor -->
+				<main class="reproductor-container">
+					<div class="audio-container">
+						<audio id="reproductor" src=""></audio>
+					</div>
+
+					<div class="layout-container">
+						<div class="image-container" id="song-image">
+							<div class="image-swipe">
+								<img src="" alt="Imagen de la canción" />
+							</div>
+						</div>
+
+						<div class="right-panel">
+							<div class="info-container">
+								<p id="song-name" class="swipe-in"></p>
+							</div>
+
+							<div class="progress-container">
+								<span id="currentTime">0:00</span>
+
+								<input
+									type="range"
+									id="progressBar"
+									value="0"
+									step="0.1"
+									min="0"
+								/>
+
+								<span id="durationTime">0:00</span>
+							</div>
+							<div class="controls-container">
+								<button
+									class="btn"
+									id="shuffleBtn"
+									title="Activar modo aleatorio"
+								>
+									<i class="fa-solid fa-shuffle"></i>
+								</button>
+
+								<button class="btn" id="prevBtn">
+									<i class="fa-solid fa-backward"></i>
+								</button>
+
+								<button class="btn" id="playBtn">
+									<i class="fa-solid fa-play"></i>
+								</button>
+
+								<button class="btn" id="nextBtn">
+									<i class="fa-solid fa-forward"></i>
+								</button>
+
+								<input
+									type="range"
+									id="volumeSlider"
+									value="100"
+									min="0"
+									max="100"
+								/>
+							</div>
+						</div>
+					</div>
+				</main>
+
+				<!-- Panel lateral -->
+				<aside class="panel-derecho">
+					<div class="opciones-contenedor">
+						<button class="btn-opciones active" id="song-queue">
+							<i class="fa-solid fa-list"></i>
+						</button>
+
+						<button class="btn-opciones" id="btn-lyric">
+							<i class="fa-solid fa-music"></i>
+						</button>
+					</div>
+
+					<div class="panel-content">
+						<section id="playlistView" class="panel-view active"></section>
+
+						<section id="lyricsView" class="panel-view">
+							Esta es la letra
+						</section>
+					</div>
+				</aside>
+			</div>
+		</div>
+
+		<!-- MODAL PARA AGREGAR CANCIÓN -->
+		<div class="modal-overlay" id="addSongModalOverlay">
+			<div class="add-song-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title">Agregar canción</h2>
+						<p class="modal-subtitle">Completa los datos y busca la letra</p>
+					</div>
+					<button class="modal-close-btn" id="closeAddSongModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- Cuerpo de dos columnas -->
+				<div class="modal-body">
+					<!-- ── Columna izquierda: Formulario ── -->
+					<div class="modal-col modal-col-form">
+						<div class="form-group">
+							<label for="audio-file">
+								<i class="fa-solid fa-file-audio"></i> Archivo de audio
+							</label>
+							<div class="file-drop-zone" id="audioDropZone">
+								<i class="fa-solid fa-music drop-icon"></i>
+								<span class="drop-text" id="audioFileName"
+									>Selecciona un MP3</span
+								>
+								<input type="file" id="audio-file" accept="audio/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="image-file">
+								<i class="fa-solid fa-image"></i> Imagen de portada
+							</label>
+							<div class="file-drop-zone image-drop-zone" id="imageDropZone">
+								<div class="image-preview-wrapper" id="imagePreviewWrapper">
+									<i class="fa-solid fa-image drop-icon"></i>
+									<span class="drop-text" id="imageFileName"
+										>Selecciona una imagen</span
+									>
+								</div>
+								<input type="file" id="image-file" accept="image/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="song-title">
+								<i class="fa-solid fa-pen"></i> Título de la canción
+							</label>
+							<input type="text" id="song-title" placeholder="Ej: Dance!" />
+						</div>
+
+						<div class="form-group">
+							<label for="song-artist">
+								<i class="fa-solid fa-user"></i> Artista
+							</label>
+							<input
+								type="text"
+								id="song-artist"
+								placeholder="Ej: Shihoko Hirata"
+							/>
+						</div>
+
+						<button class="btn-save-song" id="saveSongBtn" disabled>
+							<i class="fa-solid fa-floppy-disk"></i> Guardar canción
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- ── Columna derecha: Preview de letra ── -->
+					<div class="modal-col modal-col-lyrics">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Letra de la canción</h3>
+							<button class="search-lyrics-btn" id="searchLyricsBtn" disabled>
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<span>Buscar letra</span>
+							</button>
+						</div>
+
+						<!-- Estado / contenido de la letra -->
+						<div class="lyrics-preview-area" id="lyricsPreviewArea">
+							<div class="lyrics-placeholder" id="lyricsPlaceholder">
+								<i class="fa-solid fa-music placeholder-icon"></i>
+								<p>
+									Ingresa el título y artista,<br />luego presiona
+									<strong>Buscar letra</strong>
+								</p>
+							</div>
+
+							<!-- Mostrado mientras se busca -->
+							<div class="lyrics-loading hidden" id="lyricsLoading">
+								<div class="spinner"></div>
+								<p>Buscando letra...</p>
+							</div>
+
+							<!-- Resultado con el texto de la letra -->
+							<div class="lyrics-result hidden" id="lyricsResult">
+								<pre class="lyrics-preview-text" id="lyricsPreviewText"></pre>
+							</div>
+
+							<!-- Mensaje si no se encontró -->
+							<div class="lyrics-not-found hidden" id="lyricsNotFound">
+								<i class="fa-solid fa-circle-xmark not-found-icon"></i>
+								<p id="lyricsNotFoundMsg">No se encontró la letra</p>
+							</div>
+						</div>
+
+						<!-- Acciones sobre la letra encontrada -->
+						<div class="lyrics-actions hidden" id="lyricsActions">
+							<div class="lyrics-status-badge" id="lyricsStatusBadge">
+								<i class="fa-solid fa-check-circle"></i>
+								<span id="lyricsStatusText">Letra encontrada</span>
+							</div>
+							<div class="lyrics-action-btns">
+								<button class="btn-lyrics-accept" id="acceptLyricsBtn">
+									<i class="fa-solid fa-check"></i> Guardar letra
+								</button>
+								<button class="btn-lyrics-skip" id="skipLyricsBtn">
+									<i class="fa-solid fa-xmark"></i> Sin letra
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- MODAL PARA AGREGAR PLAYLIST -->
+		<div class="modal-overlay" id="addPlaylistModalOverlay">
+			<div class="add-song-modal add-playlist-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title">Agregar playlist</h2>
+						<p class="modal-subtitle">
+							Ponle un nombre, una portada y elige las canciones
+						</p>
+					</div>
+					<button class="modal-close-btn" id="closeAddPlaylistModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- Cuerpo de dos columnas -->
+				<div class="modal-body">
+					<!-- ── Columna izquierda: Formulario ── -->
+					<div class="modal-col modal-col-form">
+						<div class="form-group">
+							<label for="playlist-image">
+								<i class="fa-solid fa-image"></i> Portada de la playlist
+							</label>
+							<div
+								class="file-drop-zone image-drop-zone"
+								id="playlistImageDropZone"
+							>
+								<div
+									class="image-preview-wrapper"
+									id="playlistImagePreviewWrapper"
+								>
+									<i class="fa-solid fa-image drop-icon"></i>
+									<span class="drop-text">Selecciona una imagen</span>
+								</div>
+								<input type="file" id="playlist-image" accept="image/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="playlist-name">
+								<i class="fa-solid fa-pen"></i> Nombre de la playlist
+							</label>
+							<input
+								type="text"
+								id="playlist-name"
+								placeholder="Ej: Para estudiar"
+							/>
+						</div>
+
+						<div class="form-group playlist-selected-count-group">
+							<span class="playlist-selected-count" id="playlistSelectedCount"
+								>Ninguna canción seleccionada</span
+							>
+						</div>
+
+						<button class="btn-save-song" id="savePlaylistBtn" disabled>
+							<i class="fa-solid fa-floppy-disk"></i> Guardar playlist
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- ── Columna derecha: Selección de canciones ── -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Selecciona las canciones</h3>
+							<div class="playlist-search-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<input
+									type="text"
+									id="playlistSongSearch"
+									placeholder="Buscar canción o artista..."
+								/>
+							</div>
+						</div>
+
+						<div class="playlist-song-list" id="playlistSongList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- MODAL PARA ELIMINAR CANCIÓN -->
+		<div class="modal-overlay" id="deleteSongModalOverlay">
+			<div class="add-song-modal add-playlist-modal delete-song-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title">Eliminar canciones</h2>
+						<p class="modal-subtitle">
+							Selecciona las canciones que deseas eliminar
+						</p>
+					</div>
+
+					<button class="modal-close-btn" id="closeDeleteSongModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- Cuerpo de dos columnas -->
+				<div class="modal-body delete-song-modal-body">
+					<!-- Columna izquierda: canciones seleccionadas -->
+					<div class="modal-col delete-selection-panel">
+						<div class="delete-selection-header">
+							<div>
+								<h3 class="lyrics-col-title">Seleccionadas</h3>
+								<span class="delete-selection-count" id="deleteSelectedCount">
+									Ninguna canción seleccionada
+								</span>
+							</div>
+						</div>
+
+						<div class="delete-selected-list" id="deleteSelectedList">
+							<div class="delete-selected-empty">
+								<i class="fa-solid fa-check"></i>
+
+								<p>Selecciona una o más canciones</p>
+
+								<span> Aquí aparecerán las canciones que elijas. </span>
+							</div>
+						</div>
+
+						<button
+							class="btn-save-song delete-confirm-btn"
+							id="confirmDeleteSongsBtn"
+							disabled
+						>
+							<i class="fa-solid fa-trash"></i>
+							Eliminar seleccionadas
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- Columna derecha: canciones disponibles -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Tus canciones</h3>
+
+							<div class="playlist-search-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+
+								<input
+									type="text"
+									id="deleteSongSearch"
+									placeholder="Buscar canción o artista..."
+								/>
+							</div>
+						</div>
+
+						<div class="playlist-song-list" id="deleteSongList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- MODAL PARA EDITAR PLAYLIST -->
+		<div class="modal-overlay" id="editPlaylistModalOverlay">
+			<div class="add-song-modal add-playlist-modal delete-song-modal">
+				<!-- Header -->
+				<div class="modal-header">
+					<div class="modal-header-info">
+						<h2 class="modal-title" id="editPlaylistTitle">Editar playlist</h2>
+						<p class="modal-subtitle" id="editPlaylistSubtitle">
+							Modifica el nombre, la portada y las canciones
+						</p>
+					</div>
+					<button class="modal-close-btn" id="closeEditPlaylistModalBtn">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+
+				<!-- ============ PASO 1: nombre, portada y quitar canciones ============ -->
+				<div class="modal-body delete-song-modal-body" id="editPlaylistStep1">
+					<!-- Columna izquierda: datos de la playlist + seleccionadas para quitar -->
+					<div class="modal-col delete-selection-panel">
+						<div class="form-group">
+							<label for="editPlaylistImage">
+								<i class="fa-solid fa-image"></i> Portada de la playlist
+							</label>
+							<div
+								class="file-drop-zone image-drop-zone"
+								id="editPlaylistImageDropZone"
+							>
+								<div
+									class="image-preview-wrapper"
+									id="editPlaylistImagePreviewWrapper"
+								>
+									<i class="fa-solid fa-image drop-icon"></i>
+									<span class="drop-text">Selecciona una imagen</span>
+								</div>
+								<input type="file" id="editPlaylistImage" accept="image/*" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="editPlaylistName">
+								<i class="fa-solid fa-pen"></i> Nombre de la playlist
+							</label>
+							<input
+								type="text"
+								id="editPlaylistName"
+								placeholder="Ej: Para estudiar"
+							/>
+						</div>
+
+						<button class="btn-save-song" id="saveEditPlaylistInfoBtn">
+							<i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+						</button>
+
+						<div class="section-marker"></div>
+
+						<div class="delete-selection-header">
+							<div>
+								<h3 class="lyrics-col-title">Para quitar de la playlist</h3>
+								<span
+									class="delete-selection-count"
+									id="editPlaylistRemoveCount"
+								>
+									Ninguna canción seleccionada
+								</span>
+							</div>
+						</div>
+
+						<div class="delete-selected-list" id="editPlaylistRemoveList">
+							<div class="delete-selected-empty">
+								<i class="fa-solid fa-check"></i>
+								<p>Selecciona canciones para quitarlas</p>
+								<span>Aquí aparecerán las canciones que elijas.</span>
+							</div>
+						</div>
+
+						<button
+							class="btn-save-song delete-confirm-btn"
+							id="confirmRemoveFromPlaylistBtn"
+							disabled
+						>
+							<i class="fa-solid fa-trash"></i>
+							Quitar seleccionadas
+						</button>
+
+						<div class="section-marker"></div>
+
+						<button
+							class="btn-save-song delete-confirm-btn"
+							id="deletePlaylistBtn"
+							type="button"
+						>
+							<i class="fa-solid fa-trash-can"></i>
+							Eliminar esta playlist
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- Columna derecha: canciones actuales de la playlist -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Canciones en la playlist</h3>
+							<button class="search-lyrics-btn" id="openAddSongToPlaylistBtn">
+								<i class="fa-solid fa-plus"></i>
+								<span>Agregar canción</span>
+							</button>
+						</div>
+
+						<div class="playlist-song-list" id="editPlaylistSongList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+
+				<!-- ============ PASO 2: agregar canciones a la playlist ============ -->
+				<div
+					class="modal-body delete-song-modal-body hidden"
+					id="editPlaylistStep2"
+				>
+					<!-- Columna izquierda: seleccionadas para agregar -->
+					<div class="modal-col delete-selection-panel">
+						<button
+							class="search-lyrics-btn"
+							id="backToEditPlaylistBtn"
+							style="margin-bottom: 16px; width: fit-content"
+						>
+							<i class="fa-solid fa-arrow-left"></i>
+							<span>Volver</span>
+						</button>
+
+						<div class="delete-selection-header">
+							<div>
+								<h3 class="lyrics-col-title">Para agregar</h3>
+								<span class="delete-selection-count" id="editPlaylistAddCount">
+									Ninguna canción seleccionada
+								</span>
+							</div>
+						</div>
+
+						<div class="delete-selected-list" id="editPlaylistAddSelectedList">
+							<div class="delete-selected-empty">
+								<i class="fa-solid fa-check"></i>
+								<p>Selecciona una o más canciones</p>
+								<span>Aquí aparecerán las canciones que elijas.</span>
+							</div>
+						</div>
+
+						<button class="btn-save-song" id="confirmAddToPlaylistBtn" disabled>
+							<i class="fa-solid fa-plus"></i> Agregar seleccionadas
+						</button>
+					</div>
+
+					<!-- Divisor vertical -->
+					<div class="modal-divider"></div>
+
+					<!-- Columna derecha: canciones disponibles para agregar -->
+					<div class="modal-col modal-col-lyrics modal-col-songs">
+						<div class="lyrics-col-header">
+							<h3 class="lyrics-col-title">Tus canciones</h3>
+							<div class="playlist-search-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<input
+									type="text"
+									id="addToPlaylistSearch"
+									placeholder="Buscar canción o artista..."
+								/>
+							</div>
+						</div>
+
+						<div class="playlist-song-list" id="addToPlaylistList">
+							<!-- Canciones renderizadas dinámicamente -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="JS/router.js"></script>
+		<script src="JS/favoritos.js"></script>
+		<script src="JS/home.js"></script>
+		<script src="JS/library.js"></script>
+		<script src="JS/modal-agregar-cancion.js"></script>
+		<script src="JS/eliminarCancion.js"></script>
+		<script src="JS/playlist.js"></script>
+		<script src="JS/editarPlayList.js"></script>
 		<script src="JS/renderer.js"></script>
+		<script src="JS/dialogo.js"></script>
 	</body>
 </html>

@@ -1,0 +1,29 @@
+<div class="library-container">
+	<div class="library-header">
+		<h2>Mi Biblioteca</h2>
+		<div class="library-controls">
+			<div class="search-box">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<input
+					type="text"
+					id="librarySearchInput"
+					placeholder="Buscar canciones, artistas..."
+				/>
+			</div>
+			<div class="sort-box">
+				<label for="librarySortSelect">Ordenar por:</label>
+				<select id="librarySortSelect">
+					<option value="id_asc">Orden de agregación</option>
+					<option value="name_asc">Título (A - Z)</option>
+					<option value="name_desc">Título (Z - A)</option>
+					<option value="artist_asc">Artista (A - Z)</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<!-- Grilla donde se mostrarán todas las canciones -->
+	<div class="library-grid card-container" id="libraryGrid">
+		<!-- Las tarjetas se cargarán dinámicamente aquí con JS/library.js -->
+	</div>
+</div>
