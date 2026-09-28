@@ -12,7 +12,7 @@ const path = require("path");
 
 // Rutas de datos del usuario (userData). Debe ir DESPUÉS de app.setName.
 const R = require("./utils/rutas");
-
+const { actualizarPresencia, cerrarPresencia } = require("./utils/discord");
 const URL = "https://lrclib.net/api/get";
 
 //Generador de miniaturas
@@ -78,6 +78,10 @@ ipcMain.handle("get-thumbnail", async (event, imagePath) => {
 		console.error("Error generando miniatura:", error);
 		return null;
 	}
+});
+
+ipcMain.on("discord-presence", (event, datos) => {
+	actualizarPresencia(datos);
 });
 
 ipcMain.handle("get-lyrics", async (event, { nombre, artista, duration }) => {
@@ -369,4 +373,8 @@ app.whenReady().then(async () => {
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") app.quit();
+});
+
+app.on("will-quit", () => {
+	cerrarPresencia();
 });

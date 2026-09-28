@@ -1,7 +1,7 @@
 {
 	"name": "electron-app",
 	"productName": "Banana Music",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Reproductor de música local",
 	"author": "Juan Rdz",
 	"main": "main.js",
@@ -19,6 +19,7 @@
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-free": "^7.3.1",
+		"@xhayper/discord-rpc": "^1.5.1",
 		"better-sqlite3": "^13.0.3",
 		"get-mp3-duration": "^1.0.0",
 		"sharp": "^0.35.3"

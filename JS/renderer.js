@@ -901,3 +901,24 @@ window.cargarYReproducirLista = function (nuevaLista, indiceInicial = null) {
 	actualizarConAnimacion();
 	reproducirCancion(indiceCancion);
 };
+
+function enviarPresencia() {
+	const cancion = canciones[indiceCancion];
+
+	if (!cancion || !reproductor.getAttribute("src")) {
+		ipcRenderer.send("discord-presence", null);
+		return;
+	}
+
+	ipcRenderer.send("discord-presence", {
+		nombre: cancion.nombre,
+		artista: cancion.artista,
+		duracion: reproductor.duration, // segundos (NaN mientras carga)
+		posicion: reproductor.currentTime,
+		reproduciendo: !reproductor.paused,
+	});
+}
+
+["play", "pause", "seeked", "loadedmetadata"].forEach((evento) => {
+	reproductor.addEventListener(evento, enviarPresencia);
+});
