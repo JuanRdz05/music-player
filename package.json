@@ -39,6 +39,9 @@
 			"assets/**/*",
 			"!controllers/importarCanciones.js"
 		],
+		"nsis": {
+			"artifactName": "${productName}.${ext}"
+		},
 		"asarUnpack": [
 			"node_modules/sharp/**/*",
 			"node_modules/@img/**/*",
